@@ -182,6 +182,9 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 					Value: fmt.Sprintf("<t:%d>", new.CommunicationDisabledUntil.Time().Unix()),
 				},
 			)
+			// it's sometimes possible to remove a timeout after it's expired.
+			// this `else` statement will only be reached if the timeout was removed, so this just ensures the old timeout
+			// didn't expire already.
 		} else if old.CommunicationDisabledUntil.Time().After(time.Now()) {
 			c = getEmbed(fmt.Sprintf("**:zipper_mouth: %s's timeout was removed**", new.User.Mention()))
 		}
