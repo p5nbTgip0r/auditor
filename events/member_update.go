@@ -179,7 +179,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 			c.Fields = append(c.Fields,
 				discord.EmbedField{
 					Name:  "Timeout Expiry",
-					Value: fmt.Sprintf("<t:%d>", new.CommunicationDisabledUntil.Time().Unix()),
+					Value: fmt.Sprintf("<t:%d:R>", new.CommunicationDisabledUntil.Time().Unix()),
 				},
 			)
 			// it's sometimes possible to remove a timeout after it's expired.
