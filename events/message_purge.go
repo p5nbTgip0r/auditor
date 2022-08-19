@@ -61,6 +61,7 @@ func handlePurgedMessages(c *gateway.MessageDeleteBulkEvent, msgs []discord.Mess
 		}
 	}
 
+	// todo: use the archive system to save the raw message data and hyperlink to it
 	handleAuditError(s.SendMessageComplex(auditChannel, api.SendMessageData{
 		Embeds: []discord.Embed{embed},
 		Files:  files,
