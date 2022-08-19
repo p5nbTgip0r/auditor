@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -78,10 +79,8 @@ func init() {
 			)
 			if usedInvite != nil {
 				invMsg := fmt.Sprintf(
-					"Inviter: %s (`%s` | `%d`)\nCode: `%s`\nUses: `%d`",
-					usedInvite.Inviter.Mention(),
-					usedInvite.Inviter.Tag(),
-					usedInvite.Inviter.ID,
+					"Inviter: %s\nCode: `%s`\nUses: `%d`",
+					util.FullTag(*usedInvite.Inviter),
 					usedInvite.Code,
 					usedInvite.Uses,
 				)
