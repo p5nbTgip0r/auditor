@@ -112,6 +112,9 @@ func init() {
 					},
 				)
 			}
+			if c.IsPending {
+				embed.Description = embed.Description + "\n\n**:clipboard: User is currently in membership screening**"
+			}
 			handleAuditError(s.SendMessage(auditChannel, "", *embed))
 		})
 	})

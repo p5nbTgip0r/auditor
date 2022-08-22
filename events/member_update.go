@@ -127,7 +127,10 @@ func determineUpdatedFields(old *discord.Member, new *gateway.GuildMemberUpdateE
 		u |= fieldMemberAvatar
 	}
 
-	// Member Pending (todo, requires arikawa to add the corresponding field in the Member Update event payload)
+	// Member Pending
+	if old.IsPending != new.IsPending {
+		u |= fieldMemberPending
+	}
 
 	// Member Timeout
 	if !old.CommunicationDisabledUntil.Time().Equal(new.CommunicationDisabledUntil.Time()) {
@@ -194,6 +197,12 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 			msg, err := s.SendEmbeds(auditChannel, *c)
 			handleAuditError(msg, err, *c)
 		}
+	}
+
+	if diff.fields.Has(fieldMemberPending) && AuditMemberScreening.check(&new.GuildID, nil) {
+		c := getEmbed(fmt.Sprintf("**:clipboard: %s completed membership screening**", new.User.Mention()))
+		msg, err := s.SendEmbeds(auditChannel, *c)
+		handleAuditError(msg, err, *c)
 	}
 
 	if diff.fields.Has(fieldMemberAvatar) && AuditMemberAvatar.check(&new.GuildID, nil) {

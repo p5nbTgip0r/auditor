@@ -25,6 +25,7 @@ const (
 	AuditMemberAvatar
 	AuditMemberRoles
 	AuditMemberTimeout
+	AuditMemberScreening
 	AuditMemberJoin
 	AuditMemberLeave
 	AuditMemberBan
@@ -56,6 +57,7 @@ func (t AuditType) String() string {
 		"MemberAvatar",
 		"MemberRoles",
 		"MemberTimeout",
+		"MemberScreening",
 		"MemberJoin",
 		"MemberLeave",
 		"MemberBan",
