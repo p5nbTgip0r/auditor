@@ -15,7 +15,7 @@ func diffUser(new *gateway.GuildMemberUpdateEvent, old discord.User, diff userDi
 		return c
 	}
 
-	if diff.fields.Has(fieldUserName) || diff.fields.Has(fieldUserDiscriminator) {
+	if (diff.fields.Has(fieldUserName) || diff.fields.Has(fieldUserDiscriminator)) && AuditUserName.check(&new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:pencil: %s Discord tag changed**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old tag", Value: old.Tag()},
@@ -25,7 +25,7 @@ func diffUser(new *gateway.GuildMemberUpdateEvent, old discord.User, diff userDi
 		handleAuditError(msg, err, *c)
 	}
 
-	if diff.fields.Has(fieldUserAvatar) {
+	if diff.fields.Has(fieldUserAvatar) && AuditUserAvatar.check(&new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:frame_photo: %s changed their __user__ avatar**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL()},

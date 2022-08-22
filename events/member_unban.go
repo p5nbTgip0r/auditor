@@ -9,6 +9,10 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddHandler(func(c *gateway.GuildBanRemoveEvent) {
+			if !AuditMemberUnban.check(&c.GuildID, nil) {
+				return
+			}
+
 			e := userBaseEmbed(c.User, "", true)
 			e.Color = 0x1F8B4C
 

@@ -13,6 +13,17 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildMemberRemoveEvent) {
+			cont := false
+			for _, t := range []AuditType{AuditMemberLeave, AuditMemberKick, AuditMemberBan} {
+				if t.check(&c.GuildID, nil) {
+					cont = true
+					break
+				}
+			}
+			if !cont {
+				return
+			}
+
 			m, _ := s.MemberStore.Member(c.GuildID, c.User.ID)
 
 			go handleMemberRemove(c, m)
@@ -48,9 +59,14 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 			Value: joined,
 		},
 	)
+
 	if entry != nil && actionerMem != nil {
 		switch entry.ActionType {
 		case discord.MemberBanAdd:
+			if !AuditMemberBan.check(&c.GuildID, nil) {
+				return
+			}
+
 			embed.Color = 0x992D22
 			embed.Description = fmt.Sprintf("**:rotating_light: %s was banned**", c.User.Mention())
 			embed.Fields = append(embed.Fields,
@@ -60,6 +76,10 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 				},
 			)
 		case discord.MemberKick:
+			if !AuditMemberKick.check(&c.GuildID, nil) {
+				return
+			}
+
 			embed.Color = 0xA84300
 			embed.Description = fmt.Sprintf("**:boot: %s was kicked**", c.User.Mention())
 			embed.Fields = append(embed.Fields,
@@ -70,6 +90,10 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 			)
 		}
 	} else {
+		if !AuditMemberLeave.check(&c.GuildID, nil) {
+			return
+		}
+
 		embed.Description = fmt.Sprintf("**:outbox_tray: %s left the server**", c.User.Mention())
 		embed.Fields = append(embed.Fields,
 			discord.EmbedField{

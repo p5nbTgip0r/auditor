@@ -15,6 +15,10 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteEvent) {
+			if !AuditMessageDelete.check(&c.GuildID, &c.ChannelID) {
+				return
+			}
+
 			// Grab from the state
 			m, err := s.Message(c.ChannelID, c.ID)
 			if err != nil {

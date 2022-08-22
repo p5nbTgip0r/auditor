@@ -93,6 +93,7 @@ func init() {
 					Err(err).
 					Interface("event", e).
 					Msgf("Member was updated, but could not retrieve previous state: %s", e.User.Tag())
+				// todo: handle this situation
 			} else {
 				fields := determineUpdatedFields(old, e)
 				log.Info().Msgf("Fields: %s", fields.fields.String())
@@ -162,7 +163,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 		return c
 	}
 
-	if diff.fields.Has(fieldMemberNickname) {
+	if diff.fields.Has(fieldMemberNickname) && AuditMemberNickname.check(&new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:pencil: %s nickname edited**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old nickname", Value: old.Nick},
@@ -172,7 +173,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 		handleAuditError(msg, err, *c)
 	}
 
-	if diff.fields.Has(fieldMemberTimeout) {
+	if diff.fields.Has(fieldMemberTimeout) && AuditMemberTimeout.check(&new.GuildID, nil) {
 		var c *discord.Embed
 		if new.CommunicationDisabledUntil.IsValid() {
 			c = getEmbed(fmt.Sprintf("**:zipper_mouth: %s was timed out**", new.User.Mention()))
@@ -195,7 +196,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 		}
 	}
 
-	if diff.fields.Has(fieldMemberAvatar) {
+	if diff.fields.Has(fieldMemberAvatar) && AuditMemberAvatar.check(&new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:frame_photo: %s changed their __guild__ avatar**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL(new.GuildID)},
@@ -205,8 +206,8 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 		handleAuditError(msg, err, *c)
 	}
 
-	addRoles, remRoles := diff.addedRoles, diff.removedRoles
-	if diff.fields.Has(fieldMemberRoles) {
+	if diff.fields.Has(fieldMemberRoles) && AuditMemberRoles.check(&new.GuildID, nil) {
+		addRoles, remRoles := diff.addedRoles, diff.removedRoles
 		roleNames := make(map[discord.RoleID]string)
 		guild, err := s.Guild(new.GuildID)
 		if err == nil {

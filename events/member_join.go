@@ -13,6 +13,10 @@ func init() {
 
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.GuildCreateEvent) {
+			if !AuditMemberJoin.check(&c.ID, nil) {
+				return
+			}
+
 			inv, err := s.GuildInvites(c.ID)
 			if err != nil {
 				log.Warn().
@@ -30,6 +34,10 @@ func init() {
 			invites[c.ID] = tempInvites
 		})
 		s.AddHandler(func(c *gateway.GuildDeleteEvent) {
+			if !AuditMemberJoin.check(&c.ID, nil) {
+				return
+			}
+
 			log.Debug().
 				Interface("guild_id", c.ID).
 				Msg("Removing cached invites for guild")
@@ -38,15 +46,27 @@ func init() {
 		})
 
 		s.AddHandler(func(c *gateway.InviteCreateEvent) {
+			if !AuditMemberJoin.check(&c.GuildID, nil) {
+				return
+			}
+
 			i := invites[c.GuildID]
 			i[c.Code] = 0
 			invites[c.GuildID] = i
 		})
 		s.AddHandler(func(c *gateway.InviteDeleteEvent) {
+			if !AuditMemberJoin.check(&c.GuildID, nil) {
+				return
+			}
+
 			delete(invites[c.GuildID], c.Code)
 		})
 
 		s.AddHandler(func(c *gateway.GuildMemberAddEvent) {
+			if !AuditMemberJoin.check(&c.GuildID, nil) {
+				return
+			}
+
 			oldInvites, ok := invites[c.GuildID]
 			var usedInvite *discord.Invite
 			if ok {

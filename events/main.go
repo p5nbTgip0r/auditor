@@ -22,7 +22,9 @@ const (
 	AuditMessageUpdate
 	AuditMessagePurge
 	AuditMemberNickname
+	AuditMemberAvatar
 	AuditMemberRoles
+	AuditMemberTimeout
 	AuditMemberJoin
 	AuditMemberLeave
 	AuditMemberBan
@@ -33,7 +35,8 @@ const (
 	AuditRoleDelete
 	AuditServerEdited
 	AuditServerEmoji
-	AuditUserUpdate
+	AuditUserName
+	AuditUserAvatar
 	AuditChannelCreate
 	AuditChannelUpdate
 	AuditChannelDelete
@@ -50,7 +53,9 @@ func (t AuditType) String() string {
 		"MessageUpdate",
 		"MessagePurge",
 		"MemberNickname",
+		"MemberAvatar",
 		"MemberRoles",
+		"MemberTimeout",
 		"MemberJoin",
 		"MemberLeave",
 		"MemberBan",
@@ -61,7 +66,8 @@ func (t AuditType) String() string {
 		"RoleDelete",
 		"ServerEdited",
 		"ServerEmoji",
-		"UserUpdate",
+		"UserName",
+		"UserAvatar",
 		"ChannelCreate",
 		"ChannelUpdate",
 		"ChannelDelete",
@@ -124,4 +130,9 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 		e.Thumbnail = &discord.EmbedThumbnail{URL: user.AvatarURL()}
 	}
 	return e
+}
+
+func (t AuditType) check(g *discord.GuildID, c *discord.ChannelID) bool {
+	// todo: actually implement this
+	return true
 }

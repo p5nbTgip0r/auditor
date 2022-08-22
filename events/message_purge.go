@@ -14,6 +14,10 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteBulkEvent) {
+			if !AuditMessagePurge.check(&c.GuildID, &c.ChannelID) {
+				return
+			}
+
 			var unrecoverableMessages []discord.MessageID
 			var messages []discord.Message
 			for _, mID := range c.IDs {
