@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/deckarep/golang-set/v2 v2.1.0
-	github.com/diamondburned/arikawa/v3 v3.0.0
+	github.com/diamondburned/arikawa/v3 v3.0.1-0.20220822214349-9e9f90a65248
 	github.com/rs/zerolog v1.27.0
 )
 

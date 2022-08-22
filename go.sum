@@ -1,8 +1,8 @@
 github.com/coreos/go-systemd/v22 v22.3.3-0.20220203105225-a9a7ef127534/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/deckarep/golang-set/v2 v2.1.0 h1:g47V4Or+DUdzbs8FxCCmgb6VYd+ptPAngjM6dtGktsI=
 github.com/deckarep/golang-set/v2 v2.1.0/go.mod h1:VAky9rY/yGXJOLEDv3OMci+7wtDpOF4IN+y82NBOac4=
-github.com/diamondburned/arikawa/v3 v3.0.0 h1:VbdX1DtrBLE752IJftZHInVy6v8I3T8vhN9rKGvO6AY=
-github.com/diamondburned/arikawa/v3 v3.0.0/go.mod h1:5jBSNnp82Z/EhsKa6Wk9FsOqSxfVkNZDTDBPOj47LpY=
+github.com/diamondburned/arikawa/v3 v3.0.1-0.20220822214349-9e9f90a65248 h1:6EmgeElVyYlDFnwB9VZm2pBH2lsMfUz108sUn2aU7PA=
+github.com/diamondburned/arikawa/v3 v3.0.1-0.20220822214349-9e9f90a65248/go.mod h1:5jBSNnp82Z/EhsKa6Wk9FsOqSxfVkNZDTDBPOj47LpY=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gorilla/schema v1.2.0 h1:YufUaxZYCKGFuAq3c96BOhjgd5nmXiOY9NGzF247Tsc=
 github.com/gorilla/schema v1.2.0/go.mod h1:kgLaKoK1FELgZqMAVxx/5cbj0kT+57qxUrAlIO2eleU=
