@@ -7,6 +7,18 @@ import (
 	"strings"
 )
 
+func Plural(count int) string {
+	return CPlural(count, "s")
+}
+
+func CPlural(count int, plural string) string {
+	if count != 1 {
+		return plural
+	}
+
+	return ""
+}
+
 func FullTag(u discord.User) string {
 	return fmt.Sprintf("%s (`%s` | `%d`)", u.Mention(), u.Tag(), u.ID)
 }
