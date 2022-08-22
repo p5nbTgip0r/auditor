@@ -41,7 +41,7 @@ const (
 	AuditChannelUpdate
 	AuditChannelDelete
 	AuditChannelPermissionUpdate
-	AuditInvites
+	AuditInviteSend
 	AuditInviteCreate
 	AuditInviteDelete
 	AuditVoiceState
@@ -72,7 +72,7 @@ func (t AuditType) String() string {
 		"ChannelUpdate",
 		"ChannelDelete",
 		"ChannelPermissionUpdate",
-		"Invites",
+		"InviteSend",
 		"InviteCreate",
 		"InviteDelete",
 		"VoiceState",
