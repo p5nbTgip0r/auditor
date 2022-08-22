@@ -14,52 +14,55 @@ func init() {
 			if !AuditServerEmoji.check(&c.GuildID, nil) {
 				return
 			}
-
-			genField := func(emojis []discord.Emoji, name string, link bool) discord.EmbedField {
-				var text strings.Builder
-				for _, emoji := range emojis {
-					if text.Len() != 0 {
-						text.WriteString("\n")
-					}
-
-					if link {
-						text.WriteString(fmt.Sprintf("[`:%s:`](%s)", emoji.Name, emoji.EmojiURL()))
-					} else {
-						text.WriteString(fmt.Sprintf("%s `:%s:`", emoji.String(), emoji.Name))
-					}
-				}
-
-				return discord.EmbedField{Name: name, Value: text.String()}
-			}
-
 			o, err := s.EmojiStore.Emojis(c.GuildID)
 			if err != nil {
 				// todo: proper warning for this
 				log.Warn().Err(err).Interface("event", c).Msg("Could not retrieve guild from cache for emoji update")
 			}
 
-			var fields []discord.EmbedField
-
-			added, removed := emojiDiff(o, c.Emojis)
-
-			if len(added) != 0 {
-				fields = append(fields, genField(added, "Added emojis", false))
-			}
-
-			if len(removed) != 0 {
-				fields = append(fields, genField(removed, "Removed emojis", true))
-			}
-
-			if len(fields) != 0 {
-				handleAuditError(s.SendEmbeds(auditChannel, discord.Embed{
-					Description: "**:pencil: Server's emojis updated!**",
-					Timestamp:   discord.NowTimestamp(),
-					Color:       0xF1C40F,
-					Fields:      fields,
-				}))
-			}
+			go handleEmojiUpdate(*c, o)
 		})
 	})
+}
+
+func handleEmojiUpdate(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
+	genField := func(emojis []discord.Emoji, name string, link bool) discord.EmbedField {
+		var text strings.Builder
+		for _, emoji := range emojis {
+			if text.Len() != 0 {
+				text.WriteString("\n")
+			}
+
+			if link {
+				text.WriteString(fmt.Sprintf("[`:%s:`](%s)", emoji.Name, emoji.EmojiURL()))
+			} else {
+				text.WriteString(fmt.Sprintf("%s `:%s:`", emoji.String(), emoji.Name))
+			}
+		}
+
+		return discord.EmbedField{Name: name, Value: text.String()}
+	}
+
+	var fields []discord.EmbedField
+
+	added, removed := emojiDiff(old, c.Emojis)
+
+	if len(added) != 0 {
+		fields = append(fields, genField(added, "Added emojis", false))
+	}
+
+	if len(removed) != 0 {
+		fields = append(fields, genField(removed, "Removed emojis", true))
+	}
+
+	if len(fields) != 0 {
+		handleAuditError(s.SendEmbeds(auditChannel, discord.Embed{
+			Description: "**:pencil: Server's emojis updated!**",
+			Timestamp:   discord.NowTimestamp(),
+			Color:       0xF1C40F,
+			Fields:      fields,
+		}))
+	}
 }
 
 func emojiDiff(old, new []discord.Emoji) (added, removed []discord.Emoji) {
