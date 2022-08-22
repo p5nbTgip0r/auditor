@@ -18,6 +18,7 @@ func init() {
 			if err != nil {
 				// todo: proper warning for this
 				log.Warn().Err(err).Interface("event", c).Msg("Could not retrieve guild from cache for emoji update")
+				return
 			}
 
 			go handleEmojiUpdate(*c, o)
