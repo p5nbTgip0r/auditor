@@ -16,6 +16,7 @@ var (
 
 const auditChannel = 670908023388241931
 
+//go:generate go run golang.org/x/tools/cmd/stringer -type=AuditType -trimprefix=Audit
 type AuditType uint
 
 const (
@@ -48,39 +49,6 @@ const (
 	AuditInviteDelete
 	AuditVoiceState
 )
-
-func (t AuditType) String() string {
-	return []string{
-		"MessageDelete",
-		"MessageUpdate",
-		"MessagePurge",
-		"MemberNickname",
-		"MemberAvatar",
-		"MemberRoles",
-		"MemberTimeout",
-		"MemberScreening",
-		"MemberJoin",
-		"MemberLeave",
-		"MemberBan",
-		"MemberUnban",
-		"MemberKick",
-		"RoleCreate",
-		"RoleUpdate",
-		"RoleDelete",
-		"ServerEdited",
-		"ServerEmoji",
-		"UserName",
-		"UserAvatar",
-		"ChannelCreate",
-		"ChannelUpdate",
-		"ChannelDelete",
-		"ChannelPermissionUpdate",
-		"InviteSend",
-		"InviteCreate",
-		"InviteDelete",
-		"VoiceState",
-	}[t]
-}
 
 func InitEventHandlers(state *state.State) {
 	s = state
