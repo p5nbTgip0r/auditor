@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func LoggingInitialize() {
+func Initialize() {
 	var writers []io.Writer
 
 	writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})

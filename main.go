@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	logging.LoggingInitialize()
+	logging.Initialize()
 
 	s := state.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 
