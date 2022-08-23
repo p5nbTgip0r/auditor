@@ -52,7 +52,7 @@ func init() {
 				go handleError(
 					AuditRoleDelete,
 					err,
-					fmt.Sprintf("Could not retrieve role from cache: `%d`", c.RoleID),
+					fmt.Sprintf("Could not retrieve role from cache: `%s`", c.RoleID),
 					nil,
 				)
 				return
