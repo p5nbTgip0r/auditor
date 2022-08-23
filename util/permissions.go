@@ -1,6 +1,7 @@
 package util
 
 import (
+	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"strings"
 )
@@ -11,7 +12,7 @@ type DiscordPermission struct {
 }
 
 var (
-	PermissionName = []DiscordPermission{
+	Permissions = []DiscordPermission{
 		{discord.PermissionCreateInstantInvite, "Create Instant Invite"},
 		{discord.PermissionKickMembers, "Kick Members"},
 		{discord.PermissionBanMembers, "Ban Members"},
@@ -66,7 +67,7 @@ func PermissionString(permissions discord.Permissions) string {
 
 	var builder strings.Builder
 
-	for _, perm := range PermissionName {
+	for _, perm := range Permissions {
 		if !permissions.Has(perm.Permission) {
 			continue
 		}
@@ -78,4 +79,66 @@ func PermissionString(permissions discord.Permissions) string {
 	}
 
 	return builder.String()
+}
+
+func PermissionSliceString(permissions []DiscordPermission) string {
+	if len(permissions) == 0 {
+		return "No permissions"
+	} else if len(permissions) == len(Permissions) {
+		// duplicate entries can mess this up, but hopefully there's no duplicates in the first place
+		return "All permissions"
+	}
+
+	var builder strings.Builder
+
+	for _, perm := range permissions {
+		if builder.Len() != 0 {
+			builder.WriteString(", ")
+		}
+
+		builder.WriteString(perm.Name)
+	}
+
+	return builder.String()
+}
+
+func PermissionSetString(permissions mapset.Set[DiscordPermission]) string {
+	if permissions.Cardinality() == 0 {
+		return "No permissions"
+	} else if permissions.Cardinality() == len(Permissions) {
+		return "All permissions"
+	}
+
+	var builder strings.Builder
+
+	for perm := range permissions.Iter() {
+		if builder.Len() != 0 {
+			builder.WriteString(", ")
+		}
+
+		builder.WriteString(perm.Name)
+	}
+
+	return builder.String()
+}
+
+func GetPermissions(permissions discord.Permissions) []DiscordPermission {
+	if permissions == 0 {
+		return make([]DiscordPermission, 0)
+	} else if permissions == discord.PermissionAll {
+		dupe := make([]DiscordPermission, len(Permissions))
+		copy(dupe, Permissions)
+		return dupe
+	}
+
+	perms := make([]DiscordPermission, 0)
+
+	for _, perm := range Permissions {
+		if !permissions.Has(perm.Permission) {
+			continue
+		}
+		perms = append(perms, perm)
+	}
+
+	return perms
 }
