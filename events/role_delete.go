@@ -18,11 +18,10 @@ func init() {
 			Footer:      &discord.EmbedFooter{Text: fmt.Sprintf("ID: %s", role.ID)},
 		}
 
-		hex := strings.TrimPrefix(role.Color.String(), "#")
 		e.Fields = append(e.Fields,
 			discord.EmbedField{
 				Name:  "Color",
-				Value: fmt.Sprintf("[#%s](https://www.color-hex.com/color/%s)", hex, hex),
+				Value: color.ColorViewerLink(role.Color, role.Color.String()),
 			},
 		)
 
