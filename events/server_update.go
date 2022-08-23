@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/util"
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -29,7 +30,7 @@ func init() {
 func handleServerUpdate(old, new discord.Guild) {
 	var embed discord.Embed
 	embed.Description = "**:pencil: Server information updated!**"
-	embed.Color = 0xF1C40F
+	embed.Color = color.Gold
 	embed.Timestamp = discord.NowTimestamp()
 	var fields []discord.EmbedField
 

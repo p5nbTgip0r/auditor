@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util/color"
 	"fmt"
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -160,8 +161,7 @@ func determineUpdatedFields(old *discord.Member, new *gateway.GuildMemberUpdateE
 func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff userDiff) {
 	getEmbed := func(desc string) *discord.Embed {
 		c := userBaseEmbed(new.User, "", true)
-		// https://github.com/Rapptz/discord.py/blob/de941ababe9da898dd62d2b2a2d21aaecac6bd09/discord/colour.py#L295
-		c.Color = 0xf1c40f
+		c.Color = color.Gold
 		c.Description = desc
 		return c
 	}

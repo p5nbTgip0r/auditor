@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/util"
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -88,7 +89,7 @@ func init() {
 			}
 
 			embed := userBaseEmbed(c.User, "", true)
-			embed.Color = 0x2ECC71
+			embed.Color = color.Green
 
 			embed.Description = fmt.Sprintf("**:inbox_tray: %s joined the server**", c.User.Mention())
 			embed.Fields = append(embed.Fields,

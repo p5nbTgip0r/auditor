@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -60,7 +61,7 @@ func handleEmojiUpdate(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
 		handleAuditError(s.SendEmbeds(auditChannel, discord.Embed{
 			Description: "**:pencil: Server's emojis updated!**",
 			Timestamp:   discord.NowTimestamp(),
-			Color:       0xF1C40F,
+			Color:       color.Gold,
 			Fields:      fields,
 		}))
 	}

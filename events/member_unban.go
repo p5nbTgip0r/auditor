@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -14,7 +15,7 @@ func init() {
 			}
 
 			e := userBaseEmbed(c.User, "", true)
-			e.Color = 0x1F8B4C
+			e.Color = color.DarkGreen
 
 			e.Description = fmt.Sprintf("**:ballot_box_with_check: %s was unbanned**", c.User.Mention())
 			e.Fields = append(e.Fields,

@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -28,7 +29,7 @@ func init() {
 					Msgf("Message was deleted, but not found in cache: %s", c.ID)
 
 				desc := fmt.Sprintf("**:wastebasket: Message deleted from %s:**\n\n:warning: Message details could not be retrieved from cache.", c.ChannelID.Mention())
-				embeds := deletedMessageEmbeds(desc, c.ID, c.ChannelID, nil, nil, 0xFFB800)
+				embeds := deletedMessageEmbeds(desc, c.ID, c.ChannelID, nil, nil, color.Gold)
 				handleAuditError(s.SendEmbeds(auditChannel, embeds...))
 			} else {
 				log.Debug().
@@ -98,8 +99,7 @@ func deletedMessageLogs(m *discord.Message) {
 		})
 	}
 
-	// color is from: https://github.com/Rapptz/discord.py/blob/de941ababe9da898dd62d2b2a2d21aaecac6bd09/discord/colour.py#L354
-	embeds := deletedMessageEmbeds(desc, m.ID, m.ChannelID, &m.Author, fields, 0x546e7a)
+	embeds := deletedMessageEmbeds(desc, m.ID, m.ChannelID, &m.Author, fields, color.DarkerGray)
 
 	messageComplex, err := s.SendMessageComplex(auditChannel, api.SendMessageData{
 		Embeds: embeds,

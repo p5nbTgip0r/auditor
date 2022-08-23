@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
@@ -114,7 +115,7 @@ func errorEmbed(auditType AuditType, msg string, user *discord.User) *discord.Em
 	}
 
 	e.Description = fmt.Sprintf("**:warning: Error when creating audit message for __%s__**\n\n:pencil: %s", auditType, msg)
-	e.Color = 0xFFA500
+	e.Color = color.Red
 
 	return e
 }

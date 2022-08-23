@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/util"
+	"audit/util/color"
 	"fmt"
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/diamondburned/arikawa/v3/api"
@@ -51,7 +52,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 	}
 
 	embed := userBaseEmbed(c.User, "", true)
-	embed.Color = 0xE74C3C
+	embed.Color = color.Red
 
 	embed.Fields = append(embed.Fields,
 		discord.EmbedField{
@@ -67,7 +68,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 				return
 			}
 
-			embed.Color = 0x992D22
+			embed.Color = color.DarkRed
 			embed.Description = fmt.Sprintf("**:rotating_light: %s was banned**", c.User.Mention())
 			embed.Fields = append(embed.Fields,
 				discord.EmbedField{
@@ -80,7 +81,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 				return
 			}
 
-			embed.Color = 0xA84300
+			embed.Color = color.DarkOrange
 			embed.Description = fmt.Sprintf("**:boot: %s was kicked**", c.User.Mention())
 			embed.Fields = append(embed.Fields,
 				discord.EmbedField{
