@@ -25,7 +25,16 @@ func init() {
 				return
 			}
 
-			m, _ := s.MemberStore.Member(c.GuildID, c.User.ID)
+			m, err := s.MemberStore.Member(c.GuildID, c.User.ID)
+			if err != nil {
+				go handleError(
+					AuditMemberLeave,
+					err,
+					fmt.Sprintf("Could not retrieve member from cache: %s", util.FullTag(c.User)),
+					&c.User,
+				)
+				return
+			}
 
 			go handleMemberRemove(c, m)
 		})
