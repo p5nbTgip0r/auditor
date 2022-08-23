@@ -135,14 +135,9 @@ func handleServerUpdate(old, new discord.Guild) {
 	}
 
 	if old.MFA != new.MFA {
-		mfaReq := "No"
-		if new.MFA == discord.ElevatedMFA {
-			mfaReq = "Yes"
-		}
-
 		fields = append(fields, discord.EmbedField{
 			Name:  "Admin 2FA required",
-			Value: mfaReq,
+			Value: util.YesNoBool(new.MFA == discord.ElevatedMFA),
 		})
 	}
 

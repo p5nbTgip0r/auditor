@@ -19,6 +19,15 @@ func CPlural(count int, plural string) string {
 	return ""
 }
 
+// YesNoBool creates a string of "Yes" or "No" depending on whether the boolean parameter is true or false
+func YesNoBool(b bool) string {
+	if b {
+		return "Yes"
+	} else {
+		return "No"
+	}
+}
+
 func FullTag(u discord.User) string {
 	return fmt.Sprintf("%s (`%s` | `%d`)", u.Mention(), u.Tag(), u.ID)
 }
