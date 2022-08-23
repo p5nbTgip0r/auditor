@@ -26,6 +26,7 @@ func init() {
 		)
 
 		if role.Icon != "" {
+			// todo archive icon
 			link := fmt.Sprintf("[__Link__](%s)", role.IconURL())
 			e.Fields = append(e.Fields, discord.EmbedField{Name: "Icon", Value: link})
 		} else if role.UnicodeEmoji != "" {
