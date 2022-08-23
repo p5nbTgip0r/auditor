@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util"
 	"audit/util/color"
 	"fmt"
 	mapset "github.com/deckarep/golang-set/v2"
@@ -119,7 +120,7 @@ func determineUpdatedFields(old *discord.Member, new *gateway.GuildMemberUpdateE
 		u |= fieldMemberNickname
 	}
 	// Member roles
-	addRoles, remRoles := roleDiff(old.RoleIDs, new.RoleIDs)
+	addRoles, remRoles := util.SliceDiff(old.RoleIDs, new.RoleIDs)
 	if addRoles.Cardinality() != 0 || remRoles.Cardinality() != 0 {
 		u |= fieldMemberRoles
 	}
@@ -253,8 +254,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 
 func formatRoles(r mapset.Set[discord.RoleID], names map[discord.RoleID]string) string {
 	var msg strings.Builder
-	iter := r.Iterator()
-	for id := range iter.C {
+	for id := range r.Iter() {
 		if msg.Len() != 0 {
 			msg.WriteString("; ")
 		}
@@ -268,19 +268,4 @@ func formatRoles(r mapset.Set[discord.RoleID], names map[discord.RoleID]string) 
 		msg.WriteString("`")
 	}
 	return msg.String()
-}
-
-func roleDiff(old, new []discord.RoleID) (added, removed mapset.Set[discord.RoleID]) {
-	oldSet := mapset.NewSet[discord.RoleID]()
-	newSet := mapset.NewSet[discord.RoleID]()
-	for _, id := range old {
-		oldSet.Add(id)
-	}
-	for _, id := range new {
-		newSet.Add(id)
-	}
-
-	add := newSet.Difference(oldSet)
-	rem := oldSet.Difference(newSet)
-	return add, rem
 }

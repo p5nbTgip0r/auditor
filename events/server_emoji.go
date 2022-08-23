@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -28,7 +29,7 @@ func init() {
 }
 
 func handleEmojiUpdate(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
-	genField := func(emojis []discord.Emoji, name string, link bool) discord.EmbedField {
+	genField := func(emojis map[discord.EmojiID]discord.Emoji, name string, link bool) discord.EmbedField {
 		var text strings.Builder
 		for _, emoji := range emojis {
 			if text.Len() != 0 {
@@ -47,7 +48,9 @@ func handleEmojiUpdate(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
 
 	var fields []discord.EmbedField
 
-	added, removed := emojiDiff(old, c.Emojis)
+	added, removed := util.SliceDiffIdentifier(old, c.Emojis, func(emoji discord.Emoji) discord.EmojiID {
+		return emoji.ID
+	})
 
 	if len(added) != 0 {
 		fields = append(fields, genField(added, "Added emojis", false))
@@ -65,33 +68,4 @@ func handleEmojiUpdate(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
 			Fields:      fields,
 		}))
 	}
-}
-
-func emojiDiff(old, new []discord.Emoji) (added, removed []discord.Emoji) {
-	// todo maybe optimize this somehow? or make it more obvious what it's doing
-	oldMap := make(map[discord.EmojiID]discord.Emoji, len(old))
-	newMap := make(map[discord.EmojiID]discord.Emoji, len(new))
-	added = make([]discord.Emoji, 0)
-	removed = make([]discord.Emoji, 0)
-	for _, e := range old {
-		oldMap[e.ID] = e
-	}
-	for _, e := range new {
-		newMap[e.ID] = e
-	}
-
-	for id, e := range newMap {
-		_, ok := oldMap[id]
-		if !ok {
-			added = append(added, e)
-		}
-	}
-	for id, e := range oldMap {
-		_, ok := newMap[id]
-		if !ok {
-			removed = append(removed, e)
-		}
-	}
-
-	return
 }
