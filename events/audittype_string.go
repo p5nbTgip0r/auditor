@@ -31,16 +31,15 @@ func _() {
 	_ = x[AuditChannelCreate-20]
 	_ = x[AuditChannelUpdate-21]
 	_ = x[AuditChannelDelete-22]
-	_ = x[AuditChannelPermissionUpdate-23]
-	_ = x[AuditInviteSend-24]
-	_ = x[AuditInviteCreate-25]
-	_ = x[AuditInviteDelete-26]
-	_ = x[AuditVoiceState-27]
+	_ = x[AuditInviteSend-23]
+	_ = x[AuditInviteCreate-24]
+	_ = x[AuditInviteDelete-25]
+	_ = x[AuditVoiceState-26]
 }
 
-const _AuditType_name = "MessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteChannelPermissionUpdateInviteSendInviteCreateInviteDeleteVoiceState"
+const _AuditType_name = "MessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteInviteSendInviteCreateInviteDeleteVoiceState"
 
-var _AuditType_index = [...]uint16{0, 13, 26, 38, 52, 64, 75, 88, 103, 113, 124, 133, 144, 154, 164, 174, 184, 196, 207, 215, 225, 238, 251, 264, 287, 297, 309, 321, 331}
+var _AuditType_index = [...]uint16{0, 13, 26, 38, 52, 64, 75, 88, 103, 113, 124, 133, 144, 154, 164, 174, 184, 196, 207, 215, 225, 238, 251, 264, 274, 286, 298, 308}
 
 func (i AuditType) String() string {
 	if i >= AuditType(len(_AuditType_index)-1) {

@@ -43,7 +43,6 @@ const (
 	AuditChannelCreate
 	AuditChannelUpdate
 	AuditChannelDelete
-	AuditChannelPermissionUpdate
 	AuditInviteSend
 	AuditInviteCreate
 	AuditInviteDelete
