@@ -16,7 +16,7 @@ var (
 
 const auditChannel = 670908023388241931
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=AuditType -trimprefix=Audit
+//go:generate stringer -type=AuditType -trimprefix=Audit
 type AuditType uint
 
 const (
