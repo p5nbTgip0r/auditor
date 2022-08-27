@@ -56,6 +56,71 @@ var (
 		{discord.PermissionStartEmbeddedActivities, "Start Embedded Activities"},
 		{discord.PermissionModerateMembers, "Moderate Members"},
 	}
+
+	TextChannelPermissions = []DiscordPermission{
+		{discord.PermissionCreateInstantInvite, "Create Instant Invite"},
+		{discord.PermissionManageChannels, "Manage Channel"},
+		{discord.PermissionAddReactions, "Add Reactions"},
+		{discord.PermissionViewChannel, "View Channel"},
+		{discord.PermissionSendMessages, "Send Messages"},
+		{discord.PermissionSendTTSMessages, "Send TTS Messages"},
+		{discord.PermissionManageMessages, "Manage Messages"},
+		{discord.PermissionEmbedLinks, "Embed Links"},
+		{discord.PermissionAttachFiles, "Attach Files"},
+		{discord.PermissionReadMessageHistory, "Read Message History"},
+		{discord.PermissionMentionEveryone, "Mention Everyone"},
+		{discord.PermissionUseExternalEmojis, "Use External Emojis"},
+		{discord.PermissionManageRoles, "Manage Permissions"},
+		{discord.PermissionManageWebhooks, "Manage Webhooks"},
+		{discord.PermissionUseSlashCommands, "Use Slash Commands"},
+		{discord.PermissionManageThreads, "Manage Threads"},
+		{discord.PermissionCreatePublicThreads, "Create Public Threads"},
+		{discord.PermissionCreatePrivateThreads, "Create Private Threads"},
+		{discord.PermissionUseExternalStickers, "Use External Stickers"},
+		{discord.PermissionSendMessagesInThreads, "Send Messages in Threads"},
+	}
+
+	VoiceChannelPermissions = []DiscordPermission{
+		{discord.PermissionCreateInstantInvite, "Create Instant Invite"},
+		{discord.PermissionManageChannels, "Manage Channels"},
+		{discord.PermissionAddReactions, "Add Reactions"},
+		{discord.PermissionPrioritySpeaker, "Priority Speaker"},
+		{discord.PermissionStream, "Stream"},
+		{discord.PermissionViewChannel, "View Channel"},
+		{discord.PermissionSendMessages, "Send Messages"},
+		{discord.PermissionSendTTSMessages, "Send TTS Messages"},
+		{discord.PermissionManageMessages, "Manage Messages"},
+		{discord.PermissionEmbedLinks, "Embed Links"},
+		{discord.PermissionAttachFiles, "Attach Files"},
+		{discord.PermissionReadMessageHistory, "Read Message History"},
+		{discord.PermissionMentionEveryone, "Mention Everyone"},
+		{discord.PermissionUseExternalEmojis, "Use External Emojis"},
+		{discord.PermissionConnect, "Connect"},
+		{discord.PermissionSpeak, "Speak"},
+		{discord.PermissionMuteMembers, "Mute Members"},
+		{discord.PermissionDeafenMembers, "Deafen Members"},
+		{discord.PermissionMoveMembers, "Move Members"},
+		{discord.PermissionUseVAD, "Use Voice Activity"},
+		{discord.PermissionManageRoles, "Manage Permissions"},
+		{discord.PermissionManageWebhooks, "Manage Webhooks"},
+		{discord.PermissionUseSlashCommands, "Use Slash Commands"},
+		{discord.PermissionManageEvents, "Manage Events"},
+		{discord.PermissionUseExternalStickers, "Use External Stickers"},
+		{discord.PermissionStartEmbeddedActivities, "Start Embedded Activities"},
+	}
+
+	StageChannelPermissions = []DiscordPermission{
+		{discord.PermissionCreateInstantInvite, "Create Instant Invite"},
+		{discord.PermissionViewChannel, "View Channel"},
+		{discord.PermissionMentionEveryone, "Mention Everyone"},
+		{discord.PermissionConnect, "Connect"},
+		{discord.PermissionMuteMembers, "Mute Members"},
+		{discord.PermissionDeafenMembers, "Deafen Members"},
+		{discord.PermissionMoveMembers, "Move Members"},
+		{discord.PermissionManageRoles, "Manage Permissions"},
+		{discord.PermissionRequestToSpeak, "Request to Speak"},
+		{discord.PermissionManageEvents, "Manage Events"},
+	}
 )
 
 func PermissionString(permissions discord.Permissions) string {
