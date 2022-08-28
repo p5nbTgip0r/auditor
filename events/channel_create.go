@@ -28,27 +28,26 @@ func init() {
 			e := &discord.Embed{
 				Color:     color.Green,
 				Timestamp: discord.NewTimestamp(c.CreatedAt()),
-				Footer:    &discord.EmbedFooter{Text: fmt.Sprintf("ID: %s", c.ID)},
 			}
 
 			e.Description = channelChangeHeader(created, c.Channel)
 
-			// realistically, none of the fields should be filled at this point
-			if c.Channel.Type == discord.GuildVoice {
-				if region, ok := util.Regions[c.RTCRegionID]; ok {
-					e.Fields = append(e.Fields, discord.EmbedField{Name: "Voice Region", Value: region.Emoji + " " + region.Name})
+			if c.Type == discord.GuildPublicThread || c.Type == discord.GuildPrivateThread {
+				util.AddField(e, "Parent Channel", c.ParentID.Mention(), false)
+				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Thread ID: %s", c.ID)}
+			} else if c.Type == discord.GuildCategory {
+				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Category ID: %s", c.ID)}
+			} else {
+				parent, err := s.Channel(c.ParentID)
+				if err == nil {
+					util.AddField(e, "Category", parent.Name, false)
 				}
-				e.Fields = append(e.Fields, discord.EmbedField{Name: "Voice Bitrate", Value: fmt.Sprintf("%d", c.VoiceBitrate)})
-				if c.VoiceUserLimit != 0 {
-					e.Fields = append(e.Fields, discord.EmbedField{Name: "Voice User Limit", Value: fmt.Sprintf("%d", c.VoiceUserLimit)})
-				}
+				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Channel ID: %s | Category ID: %s", c.ID, c.ParentID)}
 			}
 
+			// realistically, none of the fields should be filled at this point
 			if c.Topic != "" {
 				e.Fields = append(e.Fields, discord.EmbedField{Name: "Topic", Value: c.Topic})
-			}
-			if c.UserRateLimit > 0 {
-				e.Fields = append(e.Fields, discord.EmbedField{Name: "Slowmode", Value: c.UserRateLimit.String()})
 			}
 
 			handleAuditError(s.SendEmbeds(auditChannel, *e))
@@ -76,7 +75,7 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 	case discord.GuildVoice:
 		chanType = "Voice channel"
 	case discord.GuildCategory:
-		chanType = "Channel category"
+		chanType = "Category"
 		mention = fmt.Sprintf("`%s`", c.Name)
 	default:
 		chanType = "Channel"
