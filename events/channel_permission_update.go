@@ -29,7 +29,11 @@ func init() {
 				return
 			}
 
-			var msg string
+			msg := generateOverwriteMessage(*old, c.Channel)
+			if msg == "" {
+				log.Debug().Msgf("Channel %s didn't have any permission updates", c.ID)
+				return
+			}
 			// TODO somehow check if this permission update was a part of the parent category updating
 			// this isn't very easy to do because the update for the parent category happens before all the child channels
 			// and by the time that we compare permissions to the parent, the old permissions will have been updated to the new ones.
@@ -39,14 +43,8 @@ func init() {
 			if sync {
 				//log.Debug().Msgf("Ignoring permission update for channel %s because permissions are synced", c.ID)
 				msg = ":arrows_counterclockwise: Channel permissions synced with parent category"
-			} else {
-				msg = generateOverwriteMessage(*old, c.Channel)
 			}
 
-			if msg == "" {
-				log.Debug().Msgf("Channel %s didn't have any permission updates", c.ID)
-				return
-			}
 			e := discord.Embed{
 				Description: channelChangeHeader(permissionsUpdated, c.Channel) + "\n\n" + msg,
 				Timestamp:   discord.NowTimestamp(),
