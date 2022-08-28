@@ -32,22 +32,22 @@ func OverwriteDiff(old, new discord.Overwrite, channelType *discord.ChannelType)
 		return
 	}
 
-	perms := &Permissions
+	perms := Permissions
 	if channelType != nil {
 		// swaps out the full permissions slice with one that's only applicable for that channel type.
 		// this avoids needlessly checking permissions that can't be applied as an overwrite, and the
 		// permission names are adjusted to how the discord client displays them.
 		switch *channelType {
 		case discord.GuildText:
-			perms = &TextChannelPermissions
+			perms = TextChannelPermissions
 		case discord.GuildVoice:
-			perms = &VoiceChannelPermissions
+			perms = VoiceChannelPermissions
 		case discord.GuildStageVoice:
-			perms = &StageChannelPermissions
+			perms = StageChannelPermissions
 		}
 	}
 
-	for _, perm := range *perms {
+	for _, perm := range perms {
 		if !old.ID.IsValid() {
 			// created, pass all permissions through
 			switch {
