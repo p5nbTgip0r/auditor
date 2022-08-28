@@ -32,6 +32,10 @@ func init() {
 				embeds := deletedMessageEmbeds(desc, c.ID, c.ChannelID, nil, nil, color.Gold)
 				handleAuditError(s.SendEmbeds(auditChannel, embeds...))
 			} else {
+				if m.Author.Bot {
+					// ignore bot messages
+					return
+				}
 				log.Debug().
 					Interface("event", c).
 					Interface("msg", m).
