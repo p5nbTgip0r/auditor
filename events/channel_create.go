@@ -16,6 +16,7 @@ const (
 	deleted
 	updated
 	permissionsUpdated // permissions updated
+	archived
 )
 
 func init() {
@@ -60,6 +61,8 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 		emoji = ":wastebasket:"
 	case permissionsUpdated:
 		emoji = ":crossed_swords:"
+	case archived:
+		emoji = ":package:"
 	}
 
 	var chanType string

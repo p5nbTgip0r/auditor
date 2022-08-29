@@ -12,11 +12,12 @@ func _() {
 	_ = x[deleted-1]
 	_ = x[updated-2]
 	_ = x[permissionsUpdated-3]
+	_ = x[archived-4]
 }
 
-const _changeType_name = "createddeletedupdatedpermissions updated"
+const _changeType_name = "createddeletedupdatedpermissions updatedarchived"
 
-var _changeType_index = [...]uint8{0, 7, 14, 21, 40}
+var _changeType_index = [...]uint8{0, 7, 14, 21, 40, 48}
 
 func (i changeType) String() string {
 	if i >= changeType(len(_changeType_index)-1) {
