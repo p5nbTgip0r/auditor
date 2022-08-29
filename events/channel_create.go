@@ -50,12 +50,15 @@ func init() {
 }
 
 func channelChangeHeader(t changeType, c discord.Channel) string {
-	emoji := ":pencil2:"
-	if t == created {
+	var emoji string
+	switch t {
+	case created:
 		emoji = ":pencil:"
-	} else if t == deleted {
+	case updated:
+		emoji = ":pencil2:"
+	case deleted:
 		emoji = ":wastebasket:"
-	} else if t == permissionsUpdated {
+	case permissionsUpdated:
 		emoji = ":crossed_swords:"
 	}
 
@@ -64,8 +67,17 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 	switch c.Type {
 	case discord.GuildText:
 		chanType = "Text channel"
+	case discord.GuildPublicThread:
+		chanType = "Thread"
+		mention += " (`#" + c.Name + "`)"
+	case discord.GuildPrivateThread:
+		chanType = "Private thread"
+		mention += " (`#" + c.Name + "`)"
 	case discord.GuildNews:
 		chanType = "News channel"
+	case discord.GuildNewsThread:
+		chanType = "News thread"
+		mention += " (`#" + c.Name + "`)"
 	case discord.GuildVoice:
 		chanType = "Voice channel"
 	case discord.GuildCategory:
