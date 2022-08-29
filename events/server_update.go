@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/dustin/go-humanize/english"
 	"github.com/rs/zerolog/log"
 )
 
@@ -39,10 +40,8 @@ func handleServerUpdate(old, new discord.Guild) {
 	}
 
 	if old.AFKTimeout != new.AFKTimeout {
-		oldMins := old.AFKTimeout / 60
-		oldAfkText := fmt.Sprintf("%d minute%s", oldMins, util.Plural(int(oldMins)))
-		newMins := new.AFKTimeout / 60
-		newAfkText := fmt.Sprintf("%d minute%s", newMins, util.Plural(int(newMins)))
+		oldAfkText := english.Plural(int(old.AFKTimeout/60), "minute", "")
+		newAfkText := english.Plural(int(new.AFKTimeout/60), "minute", "")
 
 		fields = append(fields, discord.EmbedField{
 			Name:  "AFK Timeout",

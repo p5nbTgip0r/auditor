@@ -7,18 +7,6 @@ import (
 	"strings"
 )
 
-func Plural(count int) string {
-	return CPlural(count, "s")
-}
-
-func CPlural(count int, plural string) string {
-	if count != 1 {
-		return plural
-	}
-
-	return ""
-}
-
 // YesNoBool creates a string of "Yes" or "No" depending on whether the boolean parameter is true or false
 func YesNoBool(b bool) string {
 	if b {
