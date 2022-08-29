@@ -4,8 +4,36 @@ import (
 	"errors"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"strconv"
 	"strings"
+	"time"
 )
+
+//go:generate stringer -type=TimeFormat -linecomment
+type TimeFormat int
+
+const (
+	ShortTime     TimeFormat = iota + 1 // t
+	LongTime                            // T
+	ShortDate                           // d
+	LongDate                            // D
+	ShortDateTime                       // f
+	LongDateTime                        // F
+	Relative                            // R
+)
+
+// Timestamp generates a Discord timestamp using the `<t:UNIXTIME>` format.
+func Timestamp(t time.Time, format TimeFormat) string {
+	var s strings.Builder
+	s.WriteString("<t:")
+	s.WriteString(strconv.FormatInt(t.Unix(), 10))
+	if format >= ShortTime && format <= Relative {
+		s.WriteString(":")
+		s.WriteString(format.String())
+	}
+	s.WriteString(">")
+	return s.String()
+}
 
 // YesNoBool creates a string of "Yes" or "No" depending on whether the boolean parameter is true or false
 func YesNoBool(b bool) string {
