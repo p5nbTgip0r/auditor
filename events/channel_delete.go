@@ -55,7 +55,8 @@ func init() {
 				switch old.DefaultAutoArchiveDuration {
 				case discord.OneHourArchive:
 					return "1 Hour"
-				case discord.OneDayArchive:
+				case 0, discord.OneDayArchive:
+					// default value
 					return "24 Hours"
 				case discord.ThreeDaysArchive:
 					return "3 Days"
