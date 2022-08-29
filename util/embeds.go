@@ -19,14 +19,14 @@ import (
 // This is mainly for cutting down on the boilerplate code with generating a value string, appending, and assigning
 // to discord.Embed.Fields
 func AddField(embed *discord.Embed, name, value string, codeTags bool) {
-	format := "%s"
+	v := value
 	if codeTags {
-		format = "`%s`"
+		v = fmt.Sprintf("`%s`", value)
 	}
 	embed.Fields = append(embed.Fields,
 		discord.EmbedField{
 			Name:  name,
-			Value: fmt.Sprintf(format, value),
+			Value: v,
 		})
 }
 
