@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"strconv"
+	"github.com/dustin/go-humanize"
+	"github.com/dustin/go-humanize/english"
 )
 
 func init() {
@@ -38,13 +39,10 @@ func init() {
 			util.AddField(e, "Topic", old.Topic, false)
 			if old.UserRateLimit != discord.NullSecond {
 				fmtSeconds := func(s discord.Seconds) string {
-					// TODO humanize the output
 					if s == 0 {
 						return "off"
-					} else if s == 1 {
-						return strconv.Itoa(int(s)) + " second"
 					} else {
-						return strconv.Itoa(int(s)) + " seconds"
+						return humanize.Duration("", s.Duration())
 					}
 				}(old.UserRateLimit)
 
@@ -85,10 +83,8 @@ func init() {
 			fmtUsers := func(s uint) string {
 				if s == 0 {
 					return "unlimited"
-				} else if s == 1 {
-					return strconv.Itoa(int(s)) + " user"
 				} else {
-					return strconv.Itoa(int(s)) + " users"
+					return english.Plural(int(s), "user", "")
 				}
 			}(old.VoiceUserLimit)
 			util.AddField(e, "User Limit", fmtUsers, false)
