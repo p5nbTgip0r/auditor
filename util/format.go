@@ -20,6 +20,10 @@ func UserTag(u discord.User) string {
 	return fmt.Sprintf("%s (`%s` | `%d`)", u.Mention(), u.Tag(), u.ID)
 }
 
+func ChannelTag(c discord.ChannelID) string {
+	return fmt.Sprintf("%s (`%s`)", c.Mention(), c.String())
+}
+
 func DiscordJumpLink(
 	guildID discord.GuildID,
 	channelID discord.ChannelID,
