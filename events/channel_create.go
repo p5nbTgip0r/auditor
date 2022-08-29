@@ -35,10 +35,7 @@ func init() {
 			if c.Type == discord.GuildCategory {
 				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Category ID: %s", c.ID)}
 			} else {
-				parent, err := s.Channel(c.ParentID)
-				if err == nil {
-					util.AddField(e, "Category", parent.Name, false)
-				}
+				util.AddField(e, "Category", c.ParentID.Mention(), false)
 				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Channel ID: %s | Category ID: %s", c.ID, c.ParentID)}
 			}
 
@@ -63,7 +60,7 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 	}
 
 	var chanType string
-	var mention string
+	mention := c.Mention()
 	switch c.Type {
 	case discord.GuildText:
 		chanType = "Text channel"
@@ -73,13 +70,8 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 		chanType = "Voice channel"
 	case discord.GuildCategory:
 		chanType = "Category"
-		mention = fmt.Sprintf("`%s`", c.Name)
 	default:
 		chanType = "Channel"
-		mention = fmt.Sprintf("`%s`", c.Name)
-	}
-	if mention == "" {
-		mention = fmt.Sprintf("`#%s`", c.Name)
 	}
 
 	return fmt.Sprintf("**%s %s %s: %s**", emoji, chanType, t.String(), mention)
