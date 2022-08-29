@@ -101,7 +101,7 @@ func init() {
 			if usedInvite != nil {
 				invMsg := fmt.Sprintf(
 					"Inviter: %s\nCode: `%s`\nUses: `%d`",
-					util.FullTag(*usedInvite.Inviter),
+					util.UserTag(*usedInvite.Inviter),
 					usedInvite.Code,
 					usedInvite.Uses,
 				)

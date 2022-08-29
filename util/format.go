@@ -28,7 +28,7 @@ func YesNoBool(b bool) string {
 	}
 }
 
-func FullTag(u discord.User) string {
+func UserTag(u discord.User) string {
 	return fmt.Sprintf("%s (`%s` | `%d`)", u.Mention(), u.Tag(), u.ID)
 }
 

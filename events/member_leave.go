@@ -30,7 +30,7 @@ func init() {
 				go handleError(
 					AuditMemberLeave,
 					err,
-					fmt.Sprintf("Could not retrieve member from cache: %s", util.FullTag(c.User)),
+					fmt.Sprintf("Could not retrieve member from cache: %s", util.UserTag(c.User)),
 					&c.User,
 				)
 				return
@@ -82,7 +82,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 			embed.Fields = append(embed.Fields,
 				discord.EmbedField{
 					Name:  "Banned by",
-					Value: util.FullTag(actionerMem.User),
+					Value: util.UserTag(actionerMem.User),
 				},
 			)
 		case discord.MemberKick:
@@ -95,7 +95,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 			embed.Fields = append(embed.Fields,
 				discord.EmbedField{
 					Name:  "Kicked by",
-					Value: util.FullTag(actionerMem.User),
+					Value: util.UserTag(actionerMem.User),
 				},
 			)
 		}

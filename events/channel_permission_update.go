@@ -150,7 +150,7 @@ func generateOverwriteMessage(old, new discord.Channel) string {
 			uid := discord.UserID(id)
 			m, _ := s.Member(new.GuildID, uid)
 			if m != nil {
-				b.WriteString(util.FullTag(m.User))
+				b.WriteString(util.UserTag(m.User))
 			} else {
 				b.WriteString(fmt.Sprintf("%s (`%s`)", uid.Mention(), uid.String()))
 			}
