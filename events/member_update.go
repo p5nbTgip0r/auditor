@@ -184,7 +184,7 @@ func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff us
 			c.Fields = append(c.Fields,
 				discord.EmbedField{
 					Name:  "Timeout Expiry",
-					Value: fmt.Sprintf("<t:%d:R>", new.CommunicationDisabledUntil.Time().Unix()),
+					Value: util.Timestamp(new.CommunicationDisabledUntil.Time(), util.Relative),
 				},
 			)
 		} else if old.CommunicationDisabledUntil.Time().After(time.Now()) {

@@ -95,7 +95,7 @@ func init() {
 			embed.Fields = append(embed.Fields,
 				discord.EmbedField{
 					Name:  "Account Creation",
-					Value: fmt.Sprintf("<t:%d:R>", c.User.CreatedAt().Unix()),
+					Value: util.Timestamp(c.User.CreatedAt(), util.Relative),
 				},
 			)
 			if usedInvite != nil {

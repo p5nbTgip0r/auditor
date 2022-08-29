@@ -55,7 +55,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 
 	var joined string
 	if m != nil {
-		joined = fmt.Sprintf("<t:%d:R>", m.Joined.Time().Unix())
+		joined = util.Timestamp(m.Joined.Time(), util.Relative)
 	} else {
 		joined = "Could not retrieve"
 	}
@@ -108,7 +108,7 @@ func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 		embed.Fields = append(embed.Fields,
 			discord.EmbedField{
 				Name:  "Account creation",
-				Value: fmt.Sprintf("<t:%d:R>", c.User.CreatedAt().Unix()),
+				Value: util.Timestamp(c.User.CreatedAt(), util.Relative),
 			},
 		)
 	}

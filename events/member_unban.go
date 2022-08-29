@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/util"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -21,7 +22,7 @@ func init() {
 			e.Fields = append(e.Fields,
 				discord.EmbedField{
 					Name:  "Account Creation",
-					Value: fmt.Sprintf("<t:%d:R>", c.User.CreatedAt().Unix()),
+					Value: util.Timestamp(c.User.CreatedAt(), util.Relative),
 				},
 			)
 
