@@ -32,10 +32,7 @@ func init() {
 
 			e.Description = channelChangeHeader(created, c.Channel)
 
-			if c.Type == discord.GuildPublicThread || c.Type == discord.GuildPrivateThread {
-				util.AddField(e, "Parent Channel", c.ParentID.Mention(), false)
-				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Thread ID: %s", c.ID)}
-			} else if c.Type == discord.GuildCategory {
+			if c.Type == discord.GuildCategory {
 				e.Footer = &discord.EmbedFooter{Text: fmt.Sprintf("Category ID: %s", c.ID)}
 			} else {
 				parent, err := s.Channel(c.ParentID)

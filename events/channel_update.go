@@ -45,7 +45,7 @@ func init() {
 		}
 
 		switch old.Type {
-		case discord.GuildText, discord.GuildNews, discord.GuildPublicThread, discord.GuildPrivateThread, discord.GuildNewsThread:
+		case discord.GuildText, discord.GuildNews:
 			if old.Topic != new.Topic {
 				util.AddUpdatedField(e, "Topic", old.Topic, new.Topic, false)
 			}

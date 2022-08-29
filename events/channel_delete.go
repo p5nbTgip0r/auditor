@@ -34,7 +34,7 @@ func init() {
 		}
 
 		switch old.Type {
-		case discord.GuildText, discord.GuildNews, discord.GuildPublicThread, discord.GuildPrivateThread, discord.GuildNewsThread:
+		case discord.GuildText, discord.GuildNews:
 			util.AddField(e, "Topic", old.Topic, false)
 			if old.UserRateLimit != discord.NullSecond {
 				fmtSeconds := func(s discord.Seconds) string {
