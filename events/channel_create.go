@@ -51,20 +51,6 @@ func init() {
 }
 
 func channelChangeHeader(t changeType, c discord.Channel) string {
-	var emoji string
-	switch t {
-	case created:
-		emoji = ":pencil:"
-	case updated:
-		emoji = ":pencil2:"
-	case deleted:
-		emoji = ":wastebasket:"
-	case permissionsUpdated:
-		emoji = ":crossed_swords:"
-	case archived:
-		emoji = ":package:"
-	}
-
 	var chanType string
 	mention := c.Mention()
 	switch c.Type {
@@ -87,6 +73,21 @@ func channelChangeHeader(t changeType, c discord.Channel) string {
 		chanType = "Category"
 	default:
 		chanType = "Channel"
+	}
+
+	var emoji string
+	switch t {
+	case created:
+		emoji = ":pencil:"
+	case updated:
+		emoji = ":pencil2:"
+	case deleted:
+		emoji = ":wastebasket:"
+		mention = "`#" + c.Name + "`"
+	case permissionsUpdated:
+		emoji = ":crossed_swords:"
+	case archived:
+		emoji = ":package:"
 	}
 
 	return fmt.Sprintf("**%s %s %s: %s**", emoji, chanType, t.String(), mention)
