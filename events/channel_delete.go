@@ -19,8 +19,6 @@ func init() {
 			Footer:      &discord.EmbedFooter{Text: fmt.Sprintf("Channel ID: %s", old.ID)},
 		}
 
-		e.Description += "\n\n"
-
 		util.AddField(e, "Name", old.Name, true)
 		util.AddField(e, "NSFW", util.YesNoBool(old.NSFW), false)
 		oldParent, err := s.Channel(old.ParentID)

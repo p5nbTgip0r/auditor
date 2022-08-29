@@ -22,8 +22,6 @@ func init() {
 			Footer:      &discord.EmbedFooter{Text: fmt.Sprintf("Channel ID: %s", new.ID)},
 		}
 
-		e.Description += "\n\n"
-
 		if old.Name != new.Name {
 			util.AddUpdatedField(e, "Name", old.Name, new.Name, true)
 		}
