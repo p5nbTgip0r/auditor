@@ -10,7 +10,7 @@ import (
 
 func init() {
 	handler = append(handler, func() {
-		s.PreHandler.AddHandler(func(c *gateway.GuildBanRemoveEvent) {
+		s.AddHandler(func(c *gateway.GuildBanRemoveEvent) {
 			if !AuditMemberUnban.check(&c.GuildID, nil) {
 				return
 			}

@@ -21,7 +21,7 @@ const (
 
 func init() {
 	handler = append(handler, func() {
-		s.PreHandler.AddHandler(func(c *gateway.ChannelCreateEvent) {
+		s.AddHandler(func(c *gateway.ChannelCreateEvent) {
 			if !AuditChannelCreate.check(&c.GuildID, &c.ID) {
 				return
 			}

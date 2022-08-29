@@ -11,7 +11,7 @@ import (
 
 func init() {
 	handler = append(handler, func() {
-		s.PreHandler.AddHandler(func(c *gateway.GuildRoleCreateEvent) {
+		s.AddHandler(func(c *gateway.GuildRoleCreateEvent) {
 			if !AuditRoleCreate.check(&c.GuildID, nil) {
 				return
 			}
