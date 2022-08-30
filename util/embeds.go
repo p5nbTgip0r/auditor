@@ -20,6 +20,9 @@ import (
 // to discord.Embed.Fields
 func AddField(embed *discord.Embed, name, value string, codeTags bool) {
 	v := value
+	if v == "" {
+		v = "<none>"
+	}
 	if codeTags {
 		v = fmt.Sprintf("`%s`", value)
 	}
