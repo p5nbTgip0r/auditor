@@ -110,17 +110,6 @@ func init() {
 				return
 			}
 
-			//old, err := s.ChannelStore.Channel(c.ID)
-			//if err != nil {
-			//	go handleError(
-			//		AuditChannelUpdate,
-			//		err,
-			//		fmt.Sprintf("Could not retrieve channel from cache: `%s` / `%s`", c.Channel.Name, c.Channel.ID),
-			//		nil,
-			//	)
-			//	return
-			//}
-
 			go handle(c.Channel)
 		})
 	})

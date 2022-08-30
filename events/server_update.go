@@ -7,7 +7,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/dustin/go-humanize/english"
-	"github.com/rs/zerolog/log"
 )
 
 func init() {
@@ -18,8 +17,12 @@ func init() {
 			}
 			g, err := s.GuildStore.Guild(c.ID)
 			if err != nil {
-				// todo: proper warning for this
-				log.Warn().Err(err).Interface("event", c).Msg("Could not retrieve guild from cache for server update")
+				go handleError(
+					AuditServerEdited,
+					err,
+					"Could not retrieve guild from cache: `"+c.ID.String()+"`",
+					nil,
+				)
 				return
 			}
 

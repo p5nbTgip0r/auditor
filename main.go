@@ -29,21 +29,6 @@ func main() {
 	s.AddIntents(gateway.IntentGuildWebhooks)
 	// Make a pre-handler
 	s.PreHandler = handler.New()
-	//s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteEvent) {
-	//	// Grab from the state
-	//	m, err := s.Message(c.ChannelID, c.ID)
-	//	if err != nil {
-	//		log.Warn().
-	//			Err(err).
-	//			Interface("event", c).
-	//			Msgf("Message was deleted, but not found in cache: %s", c.ID)
-	//	} else {
-	//		log.Info().
-	//			Interface("event", c).
-	//			Interface("msg", m).
-	//			Msgf("[Deleted] %s: %s", m.Author.Username, m.Content)
-	//	}
-	//})
 
 	events.InitEventHandlers(s)
 

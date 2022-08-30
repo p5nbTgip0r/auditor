@@ -17,6 +17,31 @@ type overwritePair struct {
 }
 
 func init() {
+	handle := func(old, new discord.Channel) {
+		msg := generateOverwriteMessage(old, new)
+		if msg == "" {
+			log.Debug().Msgf("Channel %s didn't have any permission updates", new.ID)
+			return
+		}
+		// TODO somehow check if this permission update was a part of the parent category updating
+		// this isn't very easy to do because the update for the parent category happens before all the child channels
+		// and by the time that we compare permissions to the parent, the old permissions will have been updated to the new ones.
+		// this basically means we have to get a list of all child channels on category update, then selectively
+		// exclude permission updates from them for a short period of time (until the permission update events pass).
+		sync, _ := isPermissionSync(new)
+		if sync {
+			//log.Debug().Msgf("Ignoring permission update for channel %s because permissions are synced", new.ID)
+			msg = ":arrows_counterclockwise: Channel permissions synced with parent category"
+		}
+
+		e := discord.Embed{
+			Description: channelChangeHeader(permissionsUpdated, new) + "\n\n" + msg,
+			Timestamp:   discord.NowTimestamp(),
+			Color:       color.Gold,
+		}
+		handleAuditError(s.SendEmbeds(auditChannel, e))
+	}
+
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ChannelUpdateEvent) {
 			if !AuditChannelUpdate.check(&c.GuildID, &c.ID) {
@@ -25,32 +50,16 @@ func init() {
 
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
-				log.Warn().Interface("channel", c).Msgf("Couldn't get cached channel for channel permission update")
+				go handleError(
+					AuditChannelUpdate,
+					err,
+					fmt.Sprintf("Could not retrieve channel from cache: `%s` / `%s`", c.Channel.Name, c.Channel.ID),
+					nil,
+				)
 				return
 			}
 
-			msg := generateOverwriteMessage(*old, c.Channel)
-			if msg == "" {
-				log.Debug().Msgf("Channel %s didn't have any permission updates", c.ID)
-				return
-			}
-			// TODO somehow check if this permission update was a part of the parent category updating
-			// this isn't very easy to do because the update for the parent category happens before all the child channels
-			// and by the time that we compare permissions to the parent, the old permissions will have been updated to the new ones.
-			// this basically means we have to get a list of all child channels on category update, then selectively
-			// exclude permission updates from them for a short period of time (until the permission update events pass).
-			sync, _ := isPermissionSync(c.Channel)
-			if sync {
-				//log.Debug().Msgf("Ignoring permission update for channel %s because permissions are synced", c.ID)
-				msg = ":arrows_counterclockwise: Channel permissions synced with parent category"
-			}
-
-			e := discord.Embed{
-				Description: channelChangeHeader(permissionsUpdated, c.Channel) + "\n\n" + msg,
-				Timestamp:   discord.NowTimestamp(),
-				Color:       color.Gold,
-			}
-			handleAuditError(s.SendEmbeds(auditChannel, e))
+			go handle(*old, c.Channel)
 		})
 	})
 }

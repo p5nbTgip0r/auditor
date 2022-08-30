@@ -7,7 +7,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 )
 
-func diffUser(new *gateway.GuildMemberUpdateEvent, old discord.User, diff userDiff) {
+func diffUser(new gateway.GuildMemberUpdateEvent, old discord.User, diff userDiff) {
 	getEmbed := func(desc string) *discord.Embed {
 		c := userBaseEmbed(new.User, "", false)
 		// https://github.com/Rapptz/discord.py/blob/de941ababe9da898dd62d2b2a2d21aaecac6bd09/discord/colour.py#L295

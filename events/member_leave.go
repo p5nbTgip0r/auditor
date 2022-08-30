@@ -12,6 +12,81 @@ import (
 )
 
 func init() {
+	handle := func(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
+		// sleep for a few seconds to give the audit log a chance to catch up
+		time.Sleep(time.Second * 3)
+
+		entry, _, actionerMem, _ := getAuditActioner(
+			c.GuildID,
+			discord.Snowflake(c.User.ID),
+			api.AuditLogData{},
+			// only consider bans and kicks
+			mapset.NewSet(discord.MemberBanAdd, discord.MemberKick),
+		)
+
+		var joined string
+		if m != nil {
+			joined = util.Timestamp(m.Joined.Time(), util.Relative)
+		} else {
+			joined = "Could not retrieve"
+		}
+
+		embed := userBaseEmbed(c.User, "", true)
+		embed.Color = color.Red
+
+		embed.Fields = append(embed.Fields,
+			discord.EmbedField{
+				Name:  "Joined server",
+				Value: joined,
+			},
+		)
+
+		if entry != nil && actionerMem != nil {
+			switch entry.ActionType {
+			case discord.MemberBanAdd:
+				if !AuditMemberBan.check(&c.GuildID, nil) {
+					return
+				}
+
+				embed.Color = color.DarkRed
+				embed.Description = fmt.Sprintf("**:rotating_light: %s was banned**", c.User.Mention())
+				embed.Fields = append(embed.Fields,
+					discord.EmbedField{
+						Name:  "Banned by",
+						Value: util.UserTag(actionerMem.User),
+					},
+				)
+			case discord.MemberKick:
+				if !AuditMemberKick.check(&c.GuildID, nil) {
+					return
+				}
+
+				embed.Color = color.DarkOrange
+				embed.Description = fmt.Sprintf("**:boot: %s was kicked**", c.User.Mention())
+				embed.Fields = append(embed.Fields,
+					discord.EmbedField{
+						Name:  "Kicked by",
+						Value: util.UserTag(actionerMem.User),
+					},
+				)
+			}
+		} else {
+			if !AuditMemberLeave.check(&c.GuildID, nil) {
+				return
+			}
+
+			embed.Description = fmt.Sprintf("**:outbox_tray: %s left the server**", c.User.Mention())
+			embed.Fields = append(embed.Fields,
+				discord.EmbedField{
+					Name:  "Account creation",
+					Value: util.Timestamp(c.User.CreatedAt(), util.Relative),
+				},
+			)
+		}
+
+		handleAuditError(s.SendMessage(auditChannel, "", *embed))
+	}
+
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildMemberRemoveEvent) {
 			cont := false
@@ -36,84 +111,9 @@ func init() {
 				return
 			}
 
-			go handleMemberRemove(c, m)
+			go handle(c, m)
 		})
 	})
-}
-
-func handleMemberRemove(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
-	// sleep for a few seconds to give the audit log a chance to catch up
-	time.Sleep(time.Second * 3)
-
-	entry, _, actionerMem, _ := getAuditActioner(
-		c.GuildID,
-		discord.Snowflake(c.User.ID),
-		api.AuditLogData{},
-		// only consider bans and kicks
-		mapset.NewSet(discord.MemberBanAdd, discord.MemberKick),
-	)
-
-	var joined string
-	if m != nil {
-		joined = util.Timestamp(m.Joined.Time(), util.Relative)
-	} else {
-		joined = "Could not retrieve"
-	}
-
-	embed := userBaseEmbed(c.User, "", true)
-	embed.Color = color.Red
-
-	embed.Fields = append(embed.Fields,
-		discord.EmbedField{
-			Name:  "Joined server",
-			Value: joined,
-		},
-	)
-
-	if entry != nil && actionerMem != nil {
-		switch entry.ActionType {
-		case discord.MemberBanAdd:
-			if !AuditMemberBan.check(&c.GuildID, nil) {
-				return
-			}
-
-			embed.Color = color.DarkRed
-			embed.Description = fmt.Sprintf("**:rotating_light: %s was banned**", c.User.Mention())
-			embed.Fields = append(embed.Fields,
-				discord.EmbedField{
-					Name:  "Banned by",
-					Value: util.UserTag(actionerMem.User),
-				},
-			)
-		case discord.MemberKick:
-			if !AuditMemberKick.check(&c.GuildID, nil) {
-				return
-			}
-
-			embed.Color = color.DarkOrange
-			embed.Description = fmt.Sprintf("**:boot: %s was kicked**", c.User.Mention())
-			embed.Fields = append(embed.Fields,
-				discord.EmbedField{
-					Name:  "Kicked by",
-					Value: util.UserTag(actionerMem.User),
-				},
-			)
-		}
-	} else {
-		if !AuditMemberLeave.check(&c.GuildID, nil) {
-			return
-		}
-
-		embed.Description = fmt.Sprintf("**:outbox_tray: %s left the server**", c.User.Mention())
-		embed.Fields = append(embed.Fields,
-			discord.EmbedField{
-				Name:  "Account creation",
-				Value: util.Timestamp(c.User.CreatedAt(), util.Relative),
-			},
-		)
-	}
-
-	handleAuditError(s.SendMessage(auditChannel, "", *embed))
 }
 
 func getAuditActioner(g discord.GuildID, f discord.Snowflake, data api.AuditLogData, eventTypes mapset.Set[discord.AuditLogEvent]) (

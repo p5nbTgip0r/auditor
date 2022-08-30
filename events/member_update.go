@@ -87,32 +87,38 @@ type userDiff struct {
 }
 
 func init() {
+	handle := func(old discord.Member, event gateway.GuildMemberUpdateEvent) {
+		fields := determineUpdatedFields(old, event)
+		log.Info().Msgf("Fields: %s", fields.fields.String())
+
+		log.Debug().
+			Interface("event", event).
+			Interface("member", old).
+			Msgf("Member updated: %s", event.User.Tag())
+
+		diffMember(event, old, fields)
+		diffUser(event, old.User, fields)
+	}
+
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(e *gateway.GuildMemberUpdateEvent) {
 			old, err := s.MemberStore.Member(e.GuildID, e.User.ID)
 			if err != nil {
-				log.Warn().
-					Err(err).
-					Interface("event", e).
-					Msgf("Member was updated, but could not retrieve previous state: %s", e.User.Tag())
-				// todo: handle this situation
-			} else {
-				fields := determineUpdatedFields(old, e)
-				log.Info().Msgf("Fields: %s", fields.fields.String())
-
-				log.Debug().
-					Interface("event", e).
-					Interface("member", old).
-					Msgf("Member updated: %s", e.User.Tag())
-
-				diffMember(e, *old, fields)
-				diffUser(e, old.User, fields)
+				go handleError(
+					AuditMemberJoin,
+					err,
+					"Could not retrieve member from cache: "+util.UserTag(e.User),
+					&e.User,
+				)
+				return
 			}
+
+			go handle(*old, *e)
 		})
 	})
 }
 
-func determineUpdatedFields(old *discord.Member, new *gateway.GuildMemberUpdateEvent) userDiff {
+func determineUpdatedFields(old discord.Member, new gateway.GuildMemberUpdateEvent) userDiff {
 	var u updatedUserFields
 
 	// Member nickname
@@ -159,7 +165,7 @@ func determineUpdatedFields(old *discord.Member, new *gateway.GuildMemberUpdateE
 	}
 }
 
-func diffMember(new *gateway.GuildMemberUpdateEvent, old discord.Member, diff userDiff) {
+func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff userDiff) {
 	getEmbed := func(desc string) *discord.Embed {
 		c := userBaseEmbed(new.User, "", true)
 		c.Color = color.Gold
