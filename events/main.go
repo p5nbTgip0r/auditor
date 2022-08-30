@@ -46,7 +46,8 @@ const (
 	AuditInviteSend
 	AuditInviteCreate
 	AuditInviteDelete
-	AuditVoiceState
+	AuditVoiceConnection
+	AuditVoiceAudioState
 )
 
 func InitEventHandlers(state *state.State) {

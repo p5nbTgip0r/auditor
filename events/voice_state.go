@@ -23,35 +23,43 @@ func init() {
 			handleAuditError(s.SendEmbeds(auditChannel, embed))
 		}
 
-		// joined voice
-		if (old == nil || !old.ChannelID.IsValid()) && new.ChannelID.IsValid() {
-			e.Description = "**:inbox_tray: " + new.UserID.Mention() + " joined voice in " + new.ChannelID.Mention() + "**"
-			e.Color = color.Green
-			send(*e)
-			// none of these other events should take place
+		if AuditVoiceConnection.check(&new.GuildID, &new.ChannelID) {
+			// joined voice
+			if (old == nil || !old.ChannelID.IsValid()) && new.ChannelID.IsValid() {
+				e.Description = "**:inbox_tray: " + new.UserID.Mention() + " joined voice in " + new.ChannelID.Mention() + "**"
+				e.Color = color.Green
+				send(*e)
+				// none of these other events should take place
+				return
+			}
+
+			// protect against nil pointer access on `old`
+			if old == nil {
+				log.Error().Interface("voiceState", new).Msg("Old voice state is nil but new channel is not valid. This shouldn't happen.")
+				return
+			}
+
+			// left voice
+			if old.ChannelID.IsValid() && !new.ChannelID.IsValid() {
+				e.Description = "**:outbox_tray: " + new.UserID.Mention() + " left voice from " + old.ChannelID.Mention() + "**"
+				e.Color = color.Red
+				send(*e)
+				// none of these other events should take place
+				return
+			}
+
+			// switched channels
+			if old.ChannelID.IsValid() && new.ChannelID.IsValid() && old.ChannelID != new.ChannelID {
+				e.Description = fmt.Sprintf("**:twisted_rightwards_arrows: %s switched voice channels: %s -> %s**", new.UserID.Mention(), old.ChannelID.Mention(), new.ChannelID.Mention())
+				e.Color = color.Blue
+				send(*e)
+			}
+		} else if old == nil {
 			return
 		}
 
-		// protect against nil pointer access on `old`
-		if old == nil {
-			log.Error().Interface("voiceState", new).Msg("Old voice state is nil but new channel is not valid. This shouldn't happen.")
+		if !AuditVoiceAudioState.check(&new.GuildID, &new.ChannelID) {
 			return
-		}
-
-		// left voice
-		if old.ChannelID.IsValid() && !new.ChannelID.IsValid() {
-			e.Description = "**:outbox_tray: " + new.UserID.Mention() + " left voice from " + old.ChannelID.Mention() + "**"
-			e.Color = color.Red
-			send(*e)
-			// none of these other events should take place
-			return
-		}
-
-		// switched channels
-		if old.ChannelID.IsValid() && new.ChannelID.IsValid() && old.ChannelID != new.ChannelID {
-			e.Description = fmt.Sprintf("**:twisted_rightwards_arrows: %s switched voice channels: %s -> %s**", new.UserID.Mention(), old.ChannelID.Mention(), new.ChannelID.Mention())
-			e.Color = color.Blue
-			send(*e)
 		}
 
 		audioStatus := func(id discord.UserID, actionerID discord.UserID, status bool, text string) {
@@ -106,7 +114,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.VoiceStateUpdateEvent) {
-			if !AuditVoiceState.check(&c.GuildID, &c.ChannelID) {
+			if !AuditVoiceConnection.check(&c.GuildID, &c.ChannelID) || !AuditVoiceAudioState.check(&c.GuildID, &c.ChannelID) {
 				return
 			}
 			log.Debug().Interface("event", c).Msg("Received updated voice state")
