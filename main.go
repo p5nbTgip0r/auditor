@@ -1,6 +1,7 @@
 package main
 
 import (
+	"audit/database"
 	"audit/events"
 	"audit/logging"
 	"context"
@@ -14,7 +15,19 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	logging.Initialize()
+	_, err := database.Initialize(ctx)
+	if err != nil {
+		log.Panic().Err(err).Msg("Failed connecting to MongoDB")
+	}
+	defer func(ctx context.Context) {
+		err := database.Disconnect(ctx)
+		if err != nil {
+			log.Panic().Err(err).Msg("Could not disconnect from MongoDB")
+		}
+	}(ctx)
 
 	s := state.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 
