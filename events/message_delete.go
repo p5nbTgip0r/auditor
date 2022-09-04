@@ -31,18 +31,13 @@ func init() {
 					}
 					desc := fmt.Sprintf("**:wastebasket: Message deleted from %s:**\n\n:warning: Message details could not be retrieved from cache.", c.ChannelID.Mention())
 					embeds := deletedMessageEmbeds(desc, c.ID, c.ChannelID, nil, nil, color.Gold)
-					handleAuditError(s.SendEmbeds(auditChannel, embeds...))
+					bot.QueueEmbed(audit.MessageDelete, c.GuildID, embeds...)
 				}()
 			} else {
 				if m.Author.Bot {
 					// ignore bot messages
 					return
 				}
-				log.Debug().
-					Interface("event", c).
-					Interface("msg", m).
-					Msgf("[Deleted] %s: %s", m.Author.Username, m.Content)
-
 				go deletedMessageLogs(m)
 			}
 		})
@@ -66,6 +61,11 @@ func deletedMessageLogs(m *discord.Message) {
 	if !check(audit.MessageDelete, &m.GuildID, &m.ChannelID) {
 		return
 	}
+
+	log.Debug().
+		Interface("msg", m).
+		Msgf("[Deleted] %s: %s", m.Author.Username, m.Content)
+
 	mContent := m.Content
 	if m.Content == "" {
 		mContent = "Message has no content."
@@ -110,20 +110,21 @@ func deletedMessageLogs(m *discord.Message) {
 
 	embeds := deletedMessageEmbeds(desc, m.ID, m.ChannelID, &m.Author, fields, color.DarkerGray)
 
-	bot.QueueMessage(audit.MessageDelete, m.GuildID, api.SendMessageData{
-		Embeds: embeds,
-		Files:  files,
-	})
-
-	//if err != nil {
-	//	log.Err(err).
-	//		Interface("embeds", embeds).
-	//		Msg("Could not send log message")
-	//	// todo: discord log that the discord log could not be sent
-	//	// in most cases it will be caused by file attachments being too big, so just exclude those
-	//} else {
-	//	log.Info().Msgf("Successfully sent log message: %s", messageComplex.ID)
-	//}
+	if len(m.Attachments) != 0 {
+		err := bot.ProcessMessage(bot.AuditMessage{
+			AuditType: audit.MessageDelete,
+			GuildID:   m.GuildID,
+			SendMessageData: api.SendMessageData{
+				Embeds: embeds,
+				Files:  files,
+			},
+		})
+		if err == nil {
+			return
+		}
+		// fallback to the normal message handling if sending attachments failed
+	}
+	bot.QueueEmbed(audit.MessageDelete, m.GuildID, embeds...)
 }
 
 func deletedMessageEmbeds(
