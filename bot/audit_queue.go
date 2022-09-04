@@ -68,6 +68,7 @@ func QueueMessageRaw(message AuditMessage) {
 }
 
 // ProcessMessageQueue goes through the message queue and attempts to send them to Discord.
+// This function essentially wraps ProcessMessage.
 func ProcessMessageQueue() {
 	mu.Lock()
 	defer mu.Unlock()
@@ -80,60 +81,68 @@ func ProcessMessageQueue() {
 		log.Debug().Msgf("Processing message queue: %s to go", english.Plural(messageQueue.Len(), "message", ""))
 		msg := messageQueue.PopFront()
 
-		guild, err := database.Collections.Guilds.GetGuild(msg.GuildID)
+		err := ProcessMessage(*msg)
 		if err != nil {
-			// this shouldn't happen normally because the event handlers check for enabled audit types before creating messages
-			log.Err(err).
-				Interface("guildID", msg.GuildID).
-				Interface("auditType", msg.AuditType.String()).
-				Msg("Could not process audit message as the guild could not be found in cache")
-
 			if !msg.incrementAttempts() {
 				retryMsg(msg)
 			} else {
 				// TODO wrap the message and retry as a new message
 			}
-			continue
 		}
-
-		if guild.LoggingDisabled {
-			log.Debug().
-				Interface("guildID", msg.GuildID).
-				Interface("auditType", msg.AuditType.String()).
-				Msg("Skipping audit message because logging is disabled")
-			continue
-		}
-
-		if !guild.AuditChannelID.IsValid() {
-			log.Warn().
-				Interface("guildID", msg.GuildID).
-				Interface("auditType", msg.AuditType.String()).
-				Msg("Could not process audit message as the guild channel ID is not set")
-			continue
-		}
-
-		sentMsg, err := s.SendMessageComplex(guild.AuditChannelID, msg.SendMessageData)
-		if err != nil {
-			log.Err(err).
-				Interface("guildID", msg.GuildID).
-				Interface("auditType", msg.AuditType.String()).
-				Msg("Audit message failed to be sent")
-
-			if !msg.incrementAttempts() {
-				retryMsg(msg)
-			} else {
-				// TODO wrap the message and retry as a new message
-			}
-			continue
-		}
-
-		log.Debug().
-			Interface("msgID", sentMsg.ID).
-			Interface("auditType", msg.AuditType.String()).
-			Msg("Successfully sent log message")
 	}
 
 	for _, message := range retries {
 		messageQueue.PushBack(message)
 	}
+}
+
+// ProcessMessage handles verifying an AuditMessage and attempting to send it to the appropriate log channel.
+// If sending the message failed due to an error, it will be returned.
+//
+// This function does not perform retries or fallbacks; you will have to handle these situations manually based on the
+// returned error.
+func ProcessMessage(msg AuditMessage) error {
+	guild, err := database.Collections.Guilds.GetGuild(msg.GuildID)
+	if err != nil {
+		// this shouldn't happen normally because the event handlers check for enabled audit types before creating messages
+		log.Err(err).
+			Interface("guildID", msg.GuildID).
+			Interface("auditType", msg.AuditType.String()).
+			Msg("Could not process audit message as the guild could not be found in cache")
+
+		return err
+	}
+
+	if guild.LoggingDisabled {
+		log.Debug().
+			Interface("guildID", msg.GuildID).
+			Interface("auditType", msg.AuditType.String()).
+			Msg("Skipping audit message because logging is disabled")
+		return nil
+	}
+
+	if !guild.AuditChannelID.IsValid() {
+		log.Warn().
+			Interface("guildID", msg.GuildID).
+			Interface("auditType", msg.AuditType.String()).
+			Msg("Could not process audit message as the guild channel ID is not set")
+		return nil
+	}
+
+	sentMsg, err := s.SendMessageComplex(guild.AuditChannelID, msg.SendMessageData)
+	if err != nil {
+		log.Err(err).
+			Interface("guildID", msg.GuildID).
+			Interface("auditType", msg.AuditType.String()).
+			Msg("Audit message failed to be sent")
+
+		return err
+	}
+
+	log.Debug().
+		Interface("msgID", sentMsg.ID).
+		Interface("auditType", msg.AuditType.String()).
+		Msg("Successfully sent log message")
+
+	return nil
 }
