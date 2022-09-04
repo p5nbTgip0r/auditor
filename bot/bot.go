@@ -5,6 +5,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/diamondburned/arikawa/v3/utils/handler"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"os"
 )
@@ -33,6 +34,7 @@ func Initialize(ctx context.Context) (*state.State, error) {
 	err := s.Open(ctx)
 	if err == nil {
 		log.Debug().Msg("Connected to Discord")
+		err = errors.Wrap(updateCommands(), "update slash commands")
 	}
 	return s, err
 }
