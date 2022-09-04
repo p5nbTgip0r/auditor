@@ -34,12 +34,12 @@ func (c *GuildsCollection) GetGuild(id discord.GuildID) (schema.Guild, error) {
 		return cache.Value(), nil
 	}
 
-	g := schema.Guild{}
-	err := c.FindOne(context.Background(), guildIdFilter(id)).Decode(&g)
+	g := &schema.Guild{}
+	err := c.FindOne(context.Background(), guildIdFilter(id)).Decode(g)
 	if err == nil {
-		guildCache.Set(id, g, ttlcache.DefaultTTL)
+		guildCache.Set(id, *g, ttlcache.DefaultTTL)
 	}
-	return g, err
+	return *g, err
 }
 
 func (c *GuildsCollection) SetGuild(id discord.GuildID, value schema.Guild) error {
