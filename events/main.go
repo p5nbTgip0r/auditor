@@ -72,11 +72,6 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 	return e
 }
 
-//func (t bot.AuditType) check(g *discord.GuildID, c *discord.ChannelID) bool {
-//	// todo: actually implement this
-//	return true
-//}
-
 // check looks whether the given audit type is enabled for the given guild and channel IDs.
 // This function blocks to access the database.
 func check(a audit.Type, g *discord.GuildID, c *discord.ChannelID) bool {
