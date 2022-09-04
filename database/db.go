@@ -10,10 +10,14 @@ import (
 	"os"
 )
 
-var Client *mongo.Client
+type AuditCollections struct {
+	Guilds *GuildsCollection
+}
+
 var (
-	Database         *mongo.Database
-	GuildsCollection *mongo.Collection
+	Client      *mongo.Client
+	Database    *mongo.Database
+	Collections *AuditCollections
 )
 
 func Initialize(ctx context.Context) (*mongo.Client, error) {
@@ -41,7 +45,9 @@ func Initialize(ctx context.Context) (*mongo.Client, error) {
 func setupVariables(client *mongo.Client) {
 	Client = client
 	Database = client.Database(getEnvDefault("MONGODB_DATABASE", "auditBot"))
-	GuildsCollection = Database.Collection(getEnvDefault("MONGODB_GUILDS_COLLECTION", "guilds"))
+	Collections = &AuditCollections{
+		Guilds: &GuildsCollection{Database.Collection(getEnvDefault("MONGODB_GUILDS_COLLECTION", "guilds"))},
+	}
 }
 
 func createIndexes(ctx context.Context) error {
@@ -51,7 +57,7 @@ func createIndexes(ctx context.Context) error {
 		Options: options.Index(),
 	}
 	guildIndex.Options.SetUnique(true)
-	i, err := GuildsCollection.Indexes().CreateOne(ctx, guildIndex)
+	i, err := Collections.Guilds.Indexes().CreateOne(ctx, guildIndex)
 	if err != nil {
 		return err
 	}
