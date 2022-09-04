@@ -9,6 +9,7 @@ require (
 	github.com/deckarep/golang-set/v2 v2.1.0
 	github.com/diamondburned/arikawa/v3 v3.0.1-0.20220822214349-9e9f90a65248
 	github.com/dustin/go-humanize v1.0.0
+	github.com/gammazero/deque v0.2.0
 	github.com/jellydator/ttlcache/v3 v3.0.0
 	github.com/rs/zerolog v1.27.0
 	go.mongodb.org/mongo-driver v1.10.1
