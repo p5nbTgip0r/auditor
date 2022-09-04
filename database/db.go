@@ -26,12 +26,12 @@ func Initialize(ctx context.Context) (*mongo.Client, error) {
 		return nil, fmt.Errorf("environment variable 'MONGODB_URI' must be set")
 	}
 
-	log.Debug().Msg("Starting MongoDB connection..")
+	log.Debug().Msg("Creating MongoDB client..")
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
 	}
-	log.Debug().Msg("MongoDB connection successful")
+	log.Debug().Msg("MongoDB client creation successful")
 
 	setupVariables(client)
 	err = createIndexes(ctx)
