@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -106,7 +107,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.ChannelDeleteEvent) {
-			if !AuditChannelDelete.check(&c.GuildID, &c.ID) {
+			if !audit.AuditChannelDelete.Check(&c.GuildID, &c.ID) {
 				return
 			}
 

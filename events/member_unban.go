@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -11,7 +12,7 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.GuildBanRemoveEvent) {
-			if !AuditMemberUnban.check(&c.GuildID, nil) {
+			if !audit.AuditMemberUnban.Check(&c.GuildID, nil) {
 				return
 			}
 

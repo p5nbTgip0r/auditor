@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -84,14 +85,14 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildRoleUpdateEvent) {
-			if !AuditRoleUpdate.check(&c.GuildID, nil) {
+			if !audit.AuditRoleUpdate.Check(&c.GuildID, nil) {
 				return
 			}
 
 			role, err := s.RoleStore.Role(c.GuildID, c.Role.ID)
 			if err != nil {
 				go handleError(
-					AuditRoleUpdate,
+					audit.AuditRoleUpdate,
 					err,
 					fmt.Sprintf("Could not retrieve role from cache: `%s` / `%s`", c.Role.Name, c.Role.ID),
 					nil,

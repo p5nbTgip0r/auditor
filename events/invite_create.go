@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -12,7 +13,7 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.InviteCreateEvent) {
-			if !AuditInviteCreate.check(&c.GuildID, nil) {
+			if !audit.AuditInviteCreate.Check(&c.GuildID, nil) {
 				return
 			}
 

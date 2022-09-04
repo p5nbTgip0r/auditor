@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -52,7 +53,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteBulkEvent) {
-			if !AuditMessagePurge.check(&c.GuildID, &c.ChannelID) {
+			if !audit.AuditMessagePurge.Check(&c.GuildID, &c.ChannelID) {
 				return
 			}
 

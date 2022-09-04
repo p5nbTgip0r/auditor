@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -54,13 +55,13 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildEmojisUpdateEvent) {
-			if !AuditServerEmoji.check(&c.GuildID, nil) {
+			if !audit.AuditServerEmoji.Check(&c.GuildID, nil) {
 				return
 			}
 			o, err := s.EmojiStore.Emojis(c.GuildID)
 			if err != nil {
 				go handleError(
-					AuditServerEmoji,
+					audit.AuditServerEmoji,
 					err,
 					"Could not retrieve guild from cache: `"+c.GuildID.String()+"`",
 					nil,

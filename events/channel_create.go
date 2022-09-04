@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -22,7 +23,7 @@ const (
 func init() {
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.ChannelCreateEvent) {
-			if !AuditChannelCreate.check(&c.GuildID, &c.ID) {
+			if !audit.AuditChannelCreate.Check(&c.GuildID, &c.ID) {
 				return
 			}
 

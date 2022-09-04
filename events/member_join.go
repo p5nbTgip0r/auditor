@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -14,7 +15,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.GuildCreateEvent) {
-			if !AuditMemberJoin.check(&c.ID, nil) {
+			if !audit.AuditMemberJoin.Check(&c.ID, nil) {
 				return
 			}
 
@@ -35,7 +36,7 @@ func init() {
 			invites[c.ID] = tempInvites
 		})
 		s.AddHandler(func(c *gateway.GuildDeleteEvent) {
-			if !AuditMemberJoin.check(&c.ID, nil) {
+			if !audit.AuditMemberJoin.Check(&c.ID, nil) {
 				return
 			}
 
@@ -47,7 +48,7 @@ func init() {
 		})
 
 		s.AddHandler(func(c *gateway.InviteCreateEvent) {
-			if !AuditMemberJoin.check(&c.GuildID, nil) {
+			if !audit.AuditMemberJoin.Check(&c.GuildID, nil) {
 				return
 			}
 
@@ -56,7 +57,7 @@ func init() {
 			invites[c.GuildID] = i
 		})
 		s.AddHandler(func(c *gateway.InviteDeleteEvent) {
-			if !AuditMemberJoin.check(&c.GuildID, nil) {
+			if !audit.AuditMemberJoin.Check(&c.GuildID, nil) {
 				return
 			}
 
@@ -64,7 +65,7 @@ func init() {
 		})
 
 		s.AddHandler(func(c *gateway.GuildMemberAddEvent) {
-			if !AuditMemberJoin.check(&c.GuildID, nil) {
+			if !audit.AuditMemberJoin.Check(&c.GuildID, nil) {
 				return
 			}
 

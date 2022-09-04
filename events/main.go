@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -15,40 +16,6 @@ var (
 )
 
 const auditChannel = 670908023388241931
-
-//go:generate stringer -type=AuditType -trimprefix=Audit
-type AuditType uint
-
-const (
-	AuditMessageDelete AuditType = iota
-	AuditMessageUpdate
-	AuditMessagePurge
-	AuditMemberNickname
-	AuditMemberAvatar
-	AuditMemberRoles
-	AuditMemberTimeout
-	AuditMemberScreening
-	AuditMemberJoin
-	AuditMemberLeave
-	AuditMemberBan
-	AuditMemberUnban
-	AuditMemberKick
-	AuditRoleCreate
-	AuditRoleUpdate
-	AuditRoleDelete
-	AuditServerEdited
-	AuditServerEmoji
-	AuditUserName
-	AuditUserAvatar
-	AuditChannelCreate
-	AuditChannelUpdate
-	AuditChannelDelete
-	AuditInviteSend
-	AuditInviteCreate
-	AuditInviteDelete
-	AuditVoiceConnection
-	AuditVoiceAudioState
-)
 
 func InitEventHandlers(state *state.State) {
 	s = state
@@ -69,12 +36,12 @@ func handleAuditError(msg *discord.Message, err error, embeds ...discord.Embed) 
 	}
 }
 
-func handleError(auditType AuditType, err error, msg string, user *discord.User) {
+func handleError(auditType audit.AuditType, err error, msg string, user *discord.User) {
 	embed := errorEmbed(auditType, msg, user)
 	handleAuditError(s.SendEmbeds(auditChannel, *embed))
 }
 
-func errorEmbed(auditType AuditType, msg string, user *discord.User) *discord.Embed {
+func errorEmbed(auditType audit.AuditType, msg string, user *discord.User) *discord.Embed {
 	var e *discord.Embed
 	if user != nil {
 		e = userBaseEmbed(*user, "", false)
@@ -103,7 +70,7 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 	return e
 }
 
-func (t AuditType) check(g *discord.GuildID, c *discord.ChannelID) bool {
-	// todo: actually implement this
-	return true
-}
+//func (t bot.AuditType) check(g *discord.GuildID, c *discord.ChannelID) bool {
+//	// todo: actually implement this
+//	return true
+//}

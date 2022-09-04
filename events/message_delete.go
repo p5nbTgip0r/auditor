@@ -1,6 +1,8 @@
 package events
 
 import (
+	"audit/audit"
+	"audit/bot"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/api"
@@ -16,7 +18,7 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteEvent) {
-			if !AuditMessageDelete.check(&c.GuildID, &c.ChannelID) {
+			if !audit.AuditMessageDelete.Check(&c.GuildID, &c.ChannelID) {
 				return
 			}
 
@@ -106,20 +108,20 @@ func deletedMessageLogs(m *discord.Message) {
 
 	embeds := deletedMessageEmbeds(desc, m.ID, m.ChannelID, &m.Author, fields, color.DarkerGray)
 
-	messageComplex, err := s.SendMessageComplex(auditChannel, api.SendMessageData{
+	bot.QueueMessage(audit.AuditMessageDelete, m.GuildID, api.SendMessageData{
 		Embeds: embeds,
 		Files:  files,
 	})
 
-	if err != nil {
-		log.Err(err).
-			Interface("embeds", embeds).
-			Msg("Could not send log message")
-		// todo: discord log that the discord log could not be sent
-		// in most cases it will be caused by file attachments being too big, so just exclude those
-	} else {
-		log.Info().Msgf("Successfully sent log message: %s", messageComplex.ID)
-	}
+	//if err != nil {
+	//	log.Err(err).
+	//		Interface("embeds", embeds).
+	//		Msg("Could not send log message")
+	//	// todo: discord log that the discord log could not be sent
+	//	// in most cases it will be caused by file attachments being too big, so just exclude those
+	//} else {
+	//	log.Info().Msgf("Successfully sent log message: %s", messageComplex.ID)
+	//}
 }
 
 func deletedMessageEmbeds(

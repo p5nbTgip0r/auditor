@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -44,7 +45,7 @@ func init() {
 		if entry != nil && actionerMem != nil {
 			switch entry.ActionType {
 			case discord.MemberBanAdd:
-				if !AuditMemberBan.check(&c.GuildID, nil) {
+				if !audit.AuditMemberBan.Check(&c.GuildID, nil) {
 					return
 				}
 
@@ -57,7 +58,7 @@ func init() {
 					},
 				)
 			case discord.MemberKick:
-				if !AuditMemberKick.check(&c.GuildID, nil) {
+				if !audit.AuditMemberKick.Check(&c.GuildID, nil) {
 					return
 				}
 
@@ -71,7 +72,7 @@ func init() {
 				)
 			}
 		} else {
-			if !AuditMemberLeave.check(&c.GuildID, nil) {
+			if !audit.AuditMemberLeave.Check(&c.GuildID, nil) {
 				return
 			}
 
@@ -90,8 +91,8 @@ func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildMemberRemoveEvent) {
 			cont := false
-			for _, t := range []AuditType{AuditMemberLeave, AuditMemberKick, AuditMemberBan} {
-				if t.check(&c.GuildID, nil) {
+			for _, t := range []audit.AuditType{audit.AuditMemberLeave, audit.AuditMemberKick, audit.AuditMemberBan} {
+				if t.Check(&c.GuildID, nil) {
 					cont = true
 					break
 				}
@@ -103,7 +104,7 @@ func init() {
 			m, err := s.MemberStore.Member(c.GuildID, c.User.ID)
 			if err != nil {
 				go handleError(
-					AuditMemberLeave,
+					audit.AuditMemberLeave,
 					err,
 					fmt.Sprintf("Could not retrieve member from cache: %s", util.UserTag(c.User)),
 					&c.User,

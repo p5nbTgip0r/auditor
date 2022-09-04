@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -83,14 +84,14 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ThreadUpdateEvent) {
-			if !AuditChannelUpdate.check(&c.GuildID, &c.ID) {
+			if !audit.AuditChannelUpdate.Check(&c.GuildID, &c.ID) {
 				return
 			}
 
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(
-					AuditChannelUpdate,
+					audit.AuditChannelUpdate,
 					err,
 					fmt.Sprintf("Could not retrieve thread from cache: `%s` / `%s`", c.Channel.Name, c.Channel.ID),
 					nil,

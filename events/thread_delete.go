@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -63,14 +64,14 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ThreadDeleteEvent) {
-			if !AuditChannelDelete.check(&c.GuildID, &c.ID) {
+			if !audit.AuditChannelDelete.Check(&c.GuildID, &c.ID) {
 				return
 			}
 
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(
-					AuditChannelDelete,
+					audit.AuditChannelDelete,
 					err,
 					fmt.Sprintf("Could not retrieve thread from cache: `%s` / `%s`", c.ParentID.Mention(), c.ID),
 					nil,

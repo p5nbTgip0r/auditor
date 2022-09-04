@@ -1,6 +1,7 @@
 package events
 
 import (
+	"audit/audit"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -12,13 +13,13 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildUpdateEvent) {
-			if !AuditServerEdited.check(&c.ID, nil) {
+			if !audit.AuditServerEdited.Check(&c.ID, nil) {
 				return
 			}
 			g, err := s.GuildStore.Guild(c.ID)
 			if err != nil {
 				go handleError(
-					AuditServerEdited,
+					audit.AuditServerEdited,
 					err,
 					"Could not retrieve guild from cache: `"+c.ID.String()+"`",
 					nil,

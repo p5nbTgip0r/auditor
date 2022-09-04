@@ -1,12 +1,13 @@
 package schema
 
 import (
-	"audit/events"
+	"audit/audit"
+	"github.com/diamondburned/arikawa/v3/discord"
 )
 
 type Guild struct {
-	ID                 uint64             `bson:"guildID"`
-	AuditChannelID     uint64             `bson:"auditChannelID"`
-	LoggingDisabled    bool               `bson:"loggingDisabled"`
-	DisabledAuditTypes []events.AuditType `bson:"disabledAuditTypes"`
+	ID                 discord.GuildID   `bson:"guildID"`
+	AuditChannelID     discord.ChannelID `bson:"auditChannelID"`
+	LoggingDisabled    bool              `bson:"loggingDisabled"`
+	DisabledAuditTypes []audit.AuditType `bson:"disabledAuditTypes"`
 }
