@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	guildCache = ttlcache.New[discord.GuildID, schema.Guild](
-		ttlcache.WithTTL[discord.GuildID, schema.Guild](12 * time.Hour),
+	guildCache = ttlcache.New[discord.GuildID, *schema.Guild](
+		ttlcache.WithTTL[discord.GuildID, *schema.Guild](12 * time.Hour),
 	)
 )
 
@@ -29,23 +29,28 @@ func guildIdFilter(id discord.GuildID) interface{} {
 	return bson.D{{"guildID", id}}
 }
 
-func (c *GuildsCollection) GetGuild(id discord.GuildID) (schema.Guild, error) {
+func (c *GuildsCollection) GetGuild(id discord.GuildID) (*schema.Guild, error) {
 	if cache := guildCache.Get(id); cache != nil {
 		return cache.Value(), nil
 	}
 
-	g := &schema.Guild{}
+	g := &schema.Guild{ID: id}
 	err := c.FindOne(context.Background(), guildIdFilter(id)).Decode(g)
 	if err == nil {
-		guildCache.Set(id, *g, ttlcache.DefaultTTL)
+		guildCache.Set(id, g, ttlcache.DefaultTTL)
 	}
-	return *g, err
+	return g, err
 }
 
 func (c *GuildsCollection) SetGuild(id discord.GuildID, value schema.Guild) error {
-	_, err := c.UpdateOne(context.Background(), guildIdFilter(id), value, options.Update().SetUpsert(true))
+	g := &value
+	if !g.ID.IsValid() {
+		g.ID = id
+	}
+	result := c.FindOneAndReplace(context.Background(), guildIdFilter(id), *g, options.FindOneAndReplace().SetUpsert(true))
+	err := result.Err()
 	if err == nil {
-		guildCache.Set(id, value, ttlcache.DefaultTTL)
+		guildCache.Set(id, g, ttlcache.DefaultTTL)
 	}
 	return err
 }
