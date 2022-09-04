@@ -24,7 +24,7 @@ func init() {
 			handleAuditError(s.SendEmbeds(auditChannel, embed))
 		}
 
-		if check(audit.AuditVoiceConnection, &new.GuildID, &new.ChannelID) {
+		if check(audit.VoiceConnection, &new.GuildID, &new.ChannelID) {
 			// joined voice
 			if (old == nil || !old.ChannelID.IsValid()) && new.ChannelID.IsValid() {
 				e.Description = "**:inbox_tray: " + new.UserID.Mention() + " joined voice in " + new.ChannelID.Mention() + "**"
@@ -59,7 +59,7 @@ func init() {
 			return
 		}
 
-		if !check(audit.AuditVoiceAudioState, &new.GuildID, &new.ChannelID) {
+		if !check(audit.VoiceAudioState, &new.GuildID, &new.ChannelID) {
 			return
 		}
 
@@ -115,7 +115,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.VoiceStateUpdateEvent) {
-			if !check(audit.AuditVoiceConnection, &c.GuildID, &c.ChannelID) || !check(audit.AuditVoiceAudioState, &c.GuildID, &c.ChannelID) {
+			if !check(audit.VoiceConnection, &c.GuildID, &c.ChannelID) || !check(audit.VoiceAudioState, &c.GuildID, &c.ChannelID) {
 				return
 			}
 			log.Debug().Interface("event", c).Msg("Received updated voice state")

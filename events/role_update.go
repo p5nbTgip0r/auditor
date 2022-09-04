@@ -12,7 +12,7 @@ import (
 
 func init() {
 	handle := func(old, new discord.Role, guildID discord.GuildID) {
-		if !check(audit.AuditRoleUpdate, &guildID, nil) {
+		if !check(audit.RoleUpdate, &guildID, nil) {
 			return
 		}
 
@@ -92,7 +92,7 @@ func init() {
 			role, err := s.RoleStore.Role(c.GuildID, c.Role.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditRoleUpdate,
+					audit.RoleUpdate,
 					err,
 					fmt.Sprintf("Could not retrieve role from cache: `%s` / `%s`", c.Role.Name, c.Role.ID),
 					nil,

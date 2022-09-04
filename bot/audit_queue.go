@@ -14,7 +14,7 @@ import (
 type AuditMessage struct {
 	api.SendMessageData
 
-	AuditType audit.AuditType
+	AuditType audit.Type
 	GuildID   discord.GuildID
 
 	attempts uint8
@@ -39,7 +39,7 @@ func (m *AuditMessage) incrementAttempts() bool {
 }
 
 // QueueEmbed creates and queues a new audit message with the given embeds.
-func QueueEmbed(auditType audit.AuditType, guildID discord.GuildID, embeds ...discord.Embed) {
+func QueueEmbed(auditType audit.Type, guildID discord.GuildID, embeds ...discord.Embed) {
 	QueueMessageRaw(AuditMessage{
 		AuditType:       auditType,
 		GuildID:         guildID,
@@ -48,7 +48,7 @@ func QueueEmbed(auditType audit.AuditType, guildID discord.GuildID, embeds ...di
 }
 
 // QueueMessage creates and queues a new audit message with the given message data.
-func QueueMessage(auditType audit.AuditType, guildID discord.GuildID, data api.SendMessageData) {
+func QueueMessage(auditType audit.Type, guildID discord.GuildID, data api.SendMessageData) {
 	QueueMessageRaw(AuditMessage{
 		AuditType:       auditType,
 		GuildID:         guildID,

@@ -26,7 +26,7 @@ func init() {
 					Msgf("Message was deleted, but not found in cache: %s", c.ID)
 
 				go func() {
-					if !check(audit.AuditMessageDelete, &c.GuildID, &c.ChannelID) {
+					if !check(audit.MessageDelete, &c.GuildID, &c.ChannelID) {
 						return
 					}
 					desc := fmt.Sprintf("**:wastebasket: Message deleted from %s:**\n\n:warning: Message details could not be retrieved from cache.", c.ChannelID.Mention())
@@ -63,7 +63,7 @@ func httpDown(url string) (io.ReadCloser, error) {
 }
 
 func deletedMessageLogs(m *discord.Message) {
-	if !check(audit.AuditMessageDelete, &m.GuildID, &m.ChannelID) {
+	if !check(audit.MessageDelete, &m.GuildID, &m.ChannelID) {
 		return
 	}
 	mContent := m.Content
@@ -110,7 +110,7 @@ func deletedMessageLogs(m *discord.Message) {
 
 	embeds := deletedMessageEmbeds(desc, m.ID, m.ChannelID, &m.Author, fields, color.DarkerGray)
 
-	bot.QueueMessage(audit.AuditMessageDelete, m.GuildID, api.SendMessageData{
+	bot.QueueMessage(audit.MessageDelete, m.GuildID, api.SendMessageData{
 		Embeds: embeds,
 		Files:  files,
 	})

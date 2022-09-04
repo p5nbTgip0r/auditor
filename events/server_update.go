@@ -16,7 +16,7 @@ func init() {
 			g, err := s.GuildStore.Guild(c.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditServerEdited,
+					audit.ServerEdited,
 					err,
 					"Could not retrieve guild from cache: `"+c.ID.String()+"`",
 					nil,
@@ -30,7 +30,7 @@ func init() {
 }
 
 func handleServerUpdate(old, new discord.Guild) {
-	if !check(audit.AuditServerEdited, &new.ID, nil) {
+	if !check(audit.ServerEdited, &new.ID, nil) {
 		return
 	}
 

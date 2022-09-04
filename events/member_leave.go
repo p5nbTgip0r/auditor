@@ -19,7 +19,7 @@ func init() {
 		// TODO don't call `check` several times
 		// instead, make a new `check` function which takes in a slice/vararg of audittypes and compare the disabled slice to the passed-in slice
 		cont := false
-		for _, t := range []audit.AuditType{audit.AuditMemberLeave, audit.AuditMemberKick, audit.AuditMemberBan} {
+		for _, t := range []audit.Type{audit.MemberLeave, audit.MemberKick, audit.MemberBan} {
 			if check(t, &c.GuildID, nil) {
 				cont = true
 				break
@@ -57,7 +57,7 @@ func init() {
 		if entry != nil && actionerMem != nil {
 			switch entry.ActionType {
 			case discord.MemberBanAdd:
-				if !check(audit.AuditMemberBan, &c.GuildID, nil) {
+				if !check(audit.MemberBan, &c.GuildID, nil) {
 					return
 				}
 
@@ -70,7 +70,7 @@ func init() {
 					},
 				)
 			case discord.MemberKick:
-				if !check(audit.AuditMemberKick, &c.GuildID, nil) {
+				if !check(audit.MemberKick, &c.GuildID, nil) {
 					return
 				}
 
@@ -84,7 +84,7 @@ func init() {
 				)
 			}
 		} else {
-			if !check(audit.AuditMemberLeave, &c.GuildID, nil) {
+			if !check(audit.MemberLeave, &c.GuildID, nil) {
 				return
 			}
 
@@ -105,7 +105,7 @@ func init() {
 			m, err := s.MemberStore.Member(c.GuildID, c.User.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditMemberLeave,
+					audit.MemberLeave,
 					err,
 					fmt.Sprintf("Could not retrieve member from cache: %s", util.UserTag(c.User)),
 					&c.User,

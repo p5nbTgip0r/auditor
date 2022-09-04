@@ -15,7 +15,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.GuildCreateEvent) {
-			if !check(audit.AuditMemberJoin, &c.ID, nil) {
+			if !check(audit.MemberJoin, &c.ID, nil) {
 				return
 			}
 
@@ -36,7 +36,7 @@ func init() {
 			invites[c.ID] = tempInvites
 		})
 		s.AddHandler(func(c *gateway.GuildDeleteEvent) {
-			if !check(audit.AuditMemberJoin, &c.ID, nil) {
+			if !check(audit.MemberJoin, &c.ID, nil) {
 				return
 			}
 
@@ -48,7 +48,7 @@ func init() {
 		})
 
 		s.AddHandler(func(c *gateway.InviteCreateEvent) {
-			if !check(audit.AuditMemberJoin, &c.GuildID, nil) {
+			if !check(audit.MemberJoin, &c.GuildID, nil) {
 				return
 			}
 
@@ -57,7 +57,7 @@ func init() {
 			invites[c.GuildID] = i
 		})
 		s.AddHandler(func(c *gateway.InviteDeleteEvent) {
-			if !check(audit.AuditMemberJoin, &c.GuildID, nil) {
+			if !check(audit.MemberJoin, &c.GuildID, nil) {
 				return
 			}
 
@@ -65,7 +65,7 @@ func init() {
 		})
 
 		s.AddHandler(func(c *gateway.GuildMemberAddEvent) {
-			if !check(audit.AuditMemberJoin, &c.GuildID, nil) {
+			if !check(audit.MemberJoin, &c.GuildID, nil) {
 				return
 			}
 

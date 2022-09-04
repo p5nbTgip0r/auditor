@@ -12,7 +12,7 @@ import (
 
 func init() {
 	handle := func(c gateway.GuildRoleDeleteEvent, role discord.Role) {
-		if !check(audit.AuditRoleDelete, &c.GuildID, nil) {
+		if !check(audit.RoleDelete, &c.GuildID, nil) {
 			return
 		}
 
@@ -52,7 +52,7 @@ func init() {
 			role, err := s.RoleStore.Role(c.GuildID, c.RoleID)
 			if err != nil {
 				go handleError(
-					audit.AuditRoleDelete,
+					audit.RoleDelete,
 					err,
 					fmt.Sprintf("Could not retrieve role from cache: `%s`", c.RoleID),
 					nil,

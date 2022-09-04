@@ -13,7 +13,7 @@ import (
 
 func init() {
 	handle := func(old discord.Channel) {
-		if !check(audit.AuditChannelDelete, &old.GuildID, &old.ID) {
+		if !check(audit.ChannelDelete, &old.GuildID, &old.ID) {
 			return
 		}
 
@@ -71,7 +71,7 @@ func init() {
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditChannelDelete,
+					audit.ChannelDelete,
 					err,
 					fmt.Sprintf("Could not retrieve thread from cache: `%s` / `%s`", c.ParentID.Mention(), c.ID),
 					nil,

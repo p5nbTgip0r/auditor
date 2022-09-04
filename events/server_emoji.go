@@ -12,7 +12,7 @@ import (
 
 func init() {
 	handle := func(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
-		if !check(audit.AuditServerEmoji, &c.GuildID, nil) {
+		if !check(audit.ServerEmoji, &c.GuildID, nil) {
 			return
 		}
 
@@ -62,7 +62,7 @@ func init() {
 			o, err := s.EmojiStore.Emojis(c.GuildID)
 			if err != nil {
 				go handleError(
-					audit.AuditServerEmoji,
+					audit.ServerEmoji,
 					err,
 					"Could not retrieve guild from cache: `"+c.GuildID.String()+"`",
 					nil,

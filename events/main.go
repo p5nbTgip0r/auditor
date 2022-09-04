@@ -38,12 +38,12 @@ func handleAuditError(msg *discord.Message, err error, embeds ...discord.Embed) 
 	}
 }
 
-func handleError(auditType audit.AuditType, err error, msg string, user *discord.User) {
+func handleError(auditType audit.Type, err error, msg string, user *discord.User) {
 	embed := errorEmbed(auditType, msg, user)
 	handleAuditError(s.SendEmbeds(auditChannel, *embed))
 }
 
-func errorEmbed(auditType audit.AuditType, msg string, user *discord.User) *discord.Embed {
+func errorEmbed(auditType audit.Type, msg string, user *discord.User) *discord.Embed {
 	var e *discord.Embed
 	if user != nil {
 		e = userBaseEmbed(*user, "", false)
@@ -79,7 +79,7 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 
 // check looks whether the given audit type is enabled for the given guild and channel IDs.
 // This function blocks to access the database.
-func check(a audit.AuditType, g *discord.GuildID, c *discord.ChannelID) bool {
+func check(a audit.Type, g *discord.GuildID, c *discord.ChannelID) bool {
 	if g == nil {
 		return true
 	}

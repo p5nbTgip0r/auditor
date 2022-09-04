@@ -106,7 +106,7 @@ func init() {
 			old, err := s.MemberStore.Member(e.GuildID, e.User.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditMemberJoin,
+					audit.MemberJoin,
 					err,
 					"Could not retrieve member from cache: "+util.UserTag(e.User),
 					&e.User,
@@ -174,7 +174,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		return c
 	}
 
-	if diff.fields.Has(fieldMemberNickname) && check(audit.AuditMemberNickname, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberNickname) && check(audit.MemberNickname, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:pencil: %s nickname edited**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old nickname", Value: old.Nick},
@@ -184,7 +184,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		handleAuditError(msg, err, *c)
 	}
 
-	if diff.fields.Has(fieldMemberTimeout) && check(audit.AuditMemberTimeout, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberTimeout) && check(audit.MemberTimeout, &new.GuildID, nil) {
 		var c *discord.Embed
 		if new.CommunicationDisabledUntil.IsValid() {
 			c = getEmbed(fmt.Sprintf("**:zipper_mouth: %s was timed out**", new.User.Mention()))
@@ -207,13 +207,13 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		}
 	}
 
-	if diff.fields.Has(fieldMemberPending) && check(audit.AuditMemberScreening, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberPending) && check(audit.MemberScreening, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:clipboard: %s completed membership screening**", new.User.Mention()))
 		msg, err := s.SendEmbeds(auditChannel, *c)
 		handleAuditError(msg, err, *c)
 	}
 
-	if diff.fields.Has(fieldMemberAvatar) && check(audit.AuditMemberAvatar, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberAvatar) && check(audit.MemberAvatar, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:frame_photo: %s changed their __guild__ avatar**", new.User.Mention()))
 		c.Fields = append(c.Fields,
 			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL(new.GuildID)},
@@ -223,7 +223,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		handleAuditError(msg, err, *c)
 	}
 
-	if diff.fields.Has(fieldMemberRoles) && check(audit.AuditMemberRoles, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberRoles) && check(audit.MemberRoles, &new.GuildID, nil) {
 		addRoles, remRoles := diff.addedRoles, diff.removedRoles
 		roleNames := make(map[discord.RoleID]string)
 		guild, err := s.Guild(new.GuildID)

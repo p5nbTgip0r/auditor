@@ -14,7 +14,7 @@ import (
 
 func init() {
 	handle := func(c gateway.MessageDeleteBulkEvent, msgs []discord.Message, unrecMsgs []discord.MessageID) {
-		if !check(audit.AuditMessagePurge, &c.GuildID, &c.ChannelID) {
+		if !check(audit.MessagePurge, &c.GuildID, &c.ChannelID) {
 			return
 		}
 		desc := fmt.Sprintf("**:wastebasket: Messages purged from %s:**\n\nTotal deleted messages: %d", c.ChannelID.Mention(), len(c.IDs))

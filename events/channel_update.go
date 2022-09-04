@@ -14,7 +14,7 @@ import (
 
 func init() {
 	handle := func(old, new discord.Channel) {
-		if !check(audit.AuditChannelUpdate, &new.GuildID, &new.ID) {
+		if !check(audit.ChannelUpdate, &new.GuildID, &new.ID) {
 			return
 		}
 		log.Debug().Interface("channel", new).Msg("Channel update")
@@ -148,7 +148,7 @@ func init() {
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(
-					audit.AuditChannelUpdate,
+					audit.ChannelUpdate,
 					err,
 					fmt.Sprintf("Could not retrieve channel from cache: `%s` / `%s`", c.Channel.Name, c.Channel.ID),
 					nil,
