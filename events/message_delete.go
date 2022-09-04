@@ -18,10 +18,6 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteEvent) {
-			if !audit.AuditMessageDelete.Check(&c.GuildID, &c.ChannelID) {
-				return
-			}
-
 			m, err := s.Message(c.ChannelID, c.ID)
 			if err != nil {
 				log.Warn().
@@ -30,6 +26,9 @@ func init() {
 					Msgf("Message was deleted, but not found in cache: %s", c.ID)
 
 				go func() {
+					if !check(audit.AuditMessageDelete, &c.GuildID, &c.ChannelID) {
+						return
+					}
 					desc := fmt.Sprintf("**:wastebasket: Message deleted from %s:**\n\n:warning: Message details could not be retrieved from cache.", c.ChannelID.Mention())
 					embeds := deletedMessageEmbeds(desc, c.ID, c.ChannelID, nil, nil, color.Gold)
 					handleAuditError(s.SendEmbeds(auditChannel, embeds...))
@@ -64,6 +63,9 @@ func httpDown(url string) (io.ReadCloser, error) {
 }
 
 func deletedMessageLogs(m *discord.Message) {
+	if !check(audit.AuditMessageDelete, &m.GuildID, &m.ChannelID) {
+		return
+	}
 	mContent := m.Content
 	if m.Content == "" {
 		mContent = "Message has no content."

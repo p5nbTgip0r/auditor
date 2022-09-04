@@ -13,6 +13,10 @@ import (
 
 func init() {
 	handle := func(old discord.Channel) {
+		if !check(audit.AuditChannelDelete, &old.GuildID, &old.ID) {
+			return
+		}
+
 		log.Debug().Interface("thread", old).Msg("Thread deleted")
 
 		e := &discord.Embed{
@@ -64,10 +68,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ThreadDeleteEvent) {
-			if !audit.AuditChannelDelete.Check(&c.GuildID, &c.ID) {
-				return
-			}
-
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(

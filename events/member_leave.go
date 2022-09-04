@@ -16,6 +16,18 @@ func init() {
 	handle := func(c *gateway.GuildMemberRemoveEvent, m *discord.Member) {
 		// sleep for a few seconds to give the audit log a chance to catch up
 		time.Sleep(time.Second * 3)
+		// TODO don't call `check` several times
+		// instead, make a new `check` function which takes in a slice/vararg of audittypes and compare the disabled slice to the passed-in slice
+		cont := false
+		for _, t := range []audit.AuditType{audit.AuditMemberLeave, audit.AuditMemberKick, audit.AuditMemberBan} {
+			if check(t, &c.GuildID, nil) {
+				cont = true
+				break
+			}
+		}
+		if !cont {
+			return
+		}
 
 		entry, _, actionerMem, _ := getAuditActioner(
 			c.GuildID,
@@ -45,7 +57,7 @@ func init() {
 		if entry != nil && actionerMem != nil {
 			switch entry.ActionType {
 			case discord.MemberBanAdd:
-				if !audit.AuditMemberBan.Check(&c.GuildID, nil) {
+				if !check(audit.AuditMemberBan, &c.GuildID, nil) {
 					return
 				}
 
@@ -58,7 +70,7 @@ func init() {
 					},
 				)
 			case discord.MemberKick:
-				if !audit.AuditMemberKick.Check(&c.GuildID, nil) {
+				if !check(audit.AuditMemberKick, &c.GuildID, nil) {
 					return
 				}
 
@@ -72,7 +84,7 @@ func init() {
 				)
 			}
 		} else {
-			if !audit.AuditMemberLeave.Check(&c.GuildID, nil) {
+			if !check(audit.AuditMemberLeave, &c.GuildID, nil) {
 				return
 			}
 
@@ -90,17 +102,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildMemberRemoveEvent) {
-			cont := false
-			for _, t := range []audit.AuditType{audit.AuditMemberLeave, audit.AuditMemberKick, audit.AuditMemberBan} {
-				if t.Check(&c.GuildID, nil) {
-					cont = true
-					break
-				}
-			}
-			if !cont {
-				return
-			}
-
 			m, err := s.MemberStore.Member(c.GuildID, c.User.ID)
 			if err != nil {
 				go handleError(

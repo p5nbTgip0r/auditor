@@ -13,9 +13,6 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildUpdateEvent) {
-			if !audit.AuditServerEdited.Check(&c.ID, nil) {
-				return
-			}
 			g, err := s.GuildStore.Guild(c.ID)
 			if err != nil {
 				go handleError(
@@ -33,6 +30,10 @@ func init() {
 }
 
 func handleServerUpdate(old, new discord.Guild) {
+	if !check(audit.AuditServerEdited, &new.ID, nil) {
+		return
+	}
+
 	var embed discord.Embed
 	embed.Description = "**:pencil: Server information updated!**"
 	embed.Color = color.Gold

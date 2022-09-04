@@ -14,6 +14,9 @@ import (
 
 func init() {
 	handle := func(c gateway.MessageDeleteBulkEvent, msgs []discord.Message, unrecMsgs []discord.MessageID) {
+		if !check(audit.AuditMessagePurge, &c.GuildID, &c.ChannelID) {
+			return
+		}
 		desc := fmt.Sprintf("**:wastebasket: Messages purged from %s:**\n\nTotal deleted messages: %d", c.ChannelID.Mention(), len(c.IDs))
 		embed := discord.Embed{
 			Description: desc,
@@ -53,10 +56,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteBulkEvent) {
-			if !audit.AuditMessagePurge.Check(&c.GuildID, &c.ChannelID) {
-				return
-			}
-
 			var unrecoverableMessages []discord.MessageID
 			var messages []discord.Message
 			for _, mID := range c.IDs {

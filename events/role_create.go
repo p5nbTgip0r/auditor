@@ -13,7 +13,7 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.GuildRoleCreateEvent) {
-			if !audit.AuditRoleCreate.Check(&c.GuildID, nil) {
+			if !check(audit.AuditRoleCreate, &c.GuildID, nil) {
 				return
 			}
 

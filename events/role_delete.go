@@ -12,6 +12,10 @@ import (
 
 func init() {
 	handle := func(c gateway.GuildRoleDeleteEvent, role discord.Role) {
+		if !check(audit.AuditRoleDelete, &c.GuildID, nil) {
+			return
+		}
+
 		e := &discord.Embed{
 			Description: fmt.Sprintf("**:wastebasket: Role deleted: %s**", role.Name),
 			Color:       color.Red,
@@ -45,10 +49,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildRoleDeleteEvent) {
-			if !audit.AuditRoleDelete.Check(&c.GuildID, nil) {
-				return
-			}
-
 			role, err := s.RoleStore.Role(c.GuildID, c.RoleID)
 			if err != nil {
 				go handleError(

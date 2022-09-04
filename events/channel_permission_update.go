@@ -19,6 +19,9 @@ type overwritePair struct {
 
 func init() {
 	handle := func(old, new discord.Channel) {
+		if !check(audit.AuditChannelUpdate, &new.GuildID, &new.ID) {
+			return
+		}
 		msg := generateOverwriteMessage(old, new)
 		if msg == "" {
 			log.Debug().Msgf("Channel %s didn't have any permission updates", new.ID)
@@ -45,10 +48,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ChannelUpdateEvent) {
-			if !audit.AuditChannelUpdate.Check(&c.GuildID, &c.ID) {
-				return
-			}
-
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(

@@ -11,7 +11,11 @@ import (
 )
 
 func init() {
-	handle := func(old, new discord.Role) {
+	handle := func(old, new discord.Role, guildID discord.GuildID) {
+		if !check(audit.AuditRoleUpdate, &guildID, nil) {
+			return
+		}
+
 		e := &discord.Embed{
 			Description: fmt.Sprintf("**:pencil: Role updated: %s**", new.Name),
 			Color:       color.Gold,
@@ -85,10 +89,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildRoleUpdateEvent) {
-			if !audit.AuditRoleUpdate.Check(&c.GuildID, nil) {
-				return
-			}
-
 			role, err := s.RoleStore.Role(c.GuildID, c.Role.ID)
 			if err != nil {
 				go handleError(
@@ -101,7 +101,7 @@ func init() {
 			}
 
 			log.Debug().Interface("old_role", role).Interface("new_role", c.Role).Msgf("Got role update for %s", c.Role.Name)
-			go handle(*role, c.Role)
+			go handle(*role, c.Role, c.GuildID)
 		})
 	})
 }

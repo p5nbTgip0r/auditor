@@ -12,6 +12,10 @@ import (
 
 func init() {
 	handle := func(c gateway.GuildEmojisUpdateEvent, old []discord.Emoji) {
+		if !check(audit.AuditServerEmoji, &c.GuildID, nil) {
+			return
+		}
+
 		genField := func(emojis map[discord.EmojiID]discord.Emoji, name string, link bool) discord.EmbedField {
 			var text strings.Builder
 			for _, emoji := range emojis {
@@ -55,9 +59,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.GuildEmojisUpdateEvent) {
-			if !audit.AuditServerEmoji.Check(&c.GuildID, nil) {
-				return
-			}
 			o, err := s.EmojiStore.Emojis(c.GuildID)
 			if err != nil {
 				go handleError(

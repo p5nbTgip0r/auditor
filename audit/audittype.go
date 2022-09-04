@@ -1,7 +1,5 @@
 package audit
 
-import "github.com/diamondburned/arikawa/v3/discord"
-
 //go:generate stringer -type=AuditType -trimprefix=Audit
 type AuditType uint
 
@@ -35,8 +33,3 @@ const (
 	AuditVoiceConnection
 	AuditVoiceAudioState
 )
-
-func (t AuditType) Check(g *discord.GuildID, c *discord.ChannelID) bool {
-	// todo: actually implement this
-	return true
-}

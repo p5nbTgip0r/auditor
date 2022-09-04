@@ -13,6 +13,10 @@ import (
 
 func init() {
 	handle := func(old, new discord.Channel) {
+		if !check(audit.AuditChannelUpdate, &new.GuildID, &new.ID) {
+			return
+		}
+
 		log.Debug().Interface("thread", new).Msg("Thread update")
 
 		e := &discord.Embed{
@@ -84,10 +88,6 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.ThreadUpdateEvent) {
-			if !audit.AuditChannelUpdate.Check(&c.GuildID, &c.ID) {
-				return
-			}
-
 			old, err := s.ChannelStore.Channel(c.ID)
 			if err != nil {
 				go handleError(

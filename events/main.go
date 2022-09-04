@@ -2,11 +2,13 @@ package events
 
 import (
 	"audit/audit"
+	"audit/database"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/exp/slices"
 )
 
 var (
@@ -74,3 +76,17 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 //	// todo: actually implement this
 //	return true
 //}
+
+// check looks whether the given audit type is enabled for the given guild and channel IDs.
+// This function blocks to access the database.
+func check(a audit.AuditType, g *discord.GuildID, c *discord.ChannelID) bool {
+	if g == nil {
+		return true
+	}
+	sg, err := database.Collections.Guilds.GetGuild(*g)
+	if err != nil || sg.LoggingDisabled || !sg.AuditChannelID.IsValid() {
+		return false
+	}
+
+	return !slices.Contains(sg.DisabledAuditTypes, a)
+}

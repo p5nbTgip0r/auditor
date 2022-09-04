@@ -107,7 +107,7 @@ func init() {
 
 	handler = append(handler, func() {
 		s.AddHandler(func(c *gateway.ChannelDeleteEvent) {
-			if !audit.AuditChannelDelete.Check(&c.GuildID, &c.ID) {
+			if !check(audit.AuditChannelDelete, &c.GuildID, &c.ID) {
 				return
 			}
 
