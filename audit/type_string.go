@@ -8,39 +8,40 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[MessageDelete-0]
-	_ = x[MessageUpdate-1]
-	_ = x[MessagePurge-2]
-	_ = x[MemberNickname-3]
-	_ = x[MemberAvatar-4]
-	_ = x[MemberRoles-5]
-	_ = x[MemberTimeout-6]
-	_ = x[MemberScreening-7]
-	_ = x[MemberJoin-8]
-	_ = x[MemberLeave-9]
-	_ = x[MemberBan-10]
-	_ = x[MemberUnban-11]
-	_ = x[MemberKick-12]
-	_ = x[RoleCreate-13]
-	_ = x[RoleUpdate-14]
-	_ = x[RoleDelete-15]
-	_ = x[ServerEdited-16]
-	_ = x[ServerEmoji-17]
-	_ = x[UserName-18]
-	_ = x[UserAvatar-19]
-	_ = x[ChannelCreate-20]
-	_ = x[ChannelUpdate-21]
-	_ = x[ChannelDelete-22]
-	_ = x[InviteSend-23]
-	_ = x[InviteCreate-24]
-	_ = x[InviteDelete-25]
-	_ = x[VoiceConnection-26]
-	_ = x[VoiceAudioState-27]
+	_ = x[Unknown-0]
+	_ = x[MessageDelete-1]
+	_ = x[MessageUpdate-2]
+	_ = x[MessagePurge-3]
+	_ = x[MemberNickname-4]
+	_ = x[MemberAvatar-5]
+	_ = x[MemberRoles-6]
+	_ = x[MemberTimeout-7]
+	_ = x[MemberScreening-8]
+	_ = x[MemberJoin-9]
+	_ = x[MemberLeave-10]
+	_ = x[MemberBan-11]
+	_ = x[MemberUnban-12]
+	_ = x[MemberKick-13]
+	_ = x[RoleCreate-14]
+	_ = x[RoleUpdate-15]
+	_ = x[RoleDelete-16]
+	_ = x[ServerEdited-17]
+	_ = x[ServerEmoji-18]
+	_ = x[UserName-19]
+	_ = x[UserAvatar-20]
+	_ = x[ChannelCreate-21]
+	_ = x[ChannelUpdate-22]
+	_ = x[ChannelDelete-23]
+	_ = x[InviteSend-24]
+	_ = x[InviteCreate-25]
+	_ = x[InviteDelete-26]
+	_ = x[VoiceConnection-27]
+	_ = x[VoiceAudioState-28]
 }
 
-const _Type_name = "MessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteInviteSendInviteCreateInviteDeleteVoiceConnectionVoiceAudioState"
+const _Type_name = "UnknownMessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteInviteSendInviteCreateInviteDeleteVoiceConnectionVoiceAudioState"
 
-var _Type_index = [...]uint16{0, 13, 26, 38, 52, 64, 75, 88, 103, 113, 124, 133, 144, 154, 164, 174, 184, 196, 207, 215, 225, 238, 251, 264, 274, 286, 298, 313, 328}
+var _Type_index = [...]uint16{0, 7, 20, 33, 45, 59, 71, 82, 95, 110, 120, 131, 140, 151, 161, 171, 181, 191, 203, 214, 222, 232, 245, 258, 271, 281, 293, 305, 320, 335}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {
