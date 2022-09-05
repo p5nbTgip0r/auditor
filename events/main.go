@@ -18,8 +18,6 @@ var (
 	handler []func()
 )
 
-const auditChannel = 670908023388241931
-
 func InitEventHandlers(state *state.State) {
 	s = state
 	for _, event := range handler {
