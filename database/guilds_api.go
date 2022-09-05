@@ -47,7 +47,7 @@ func (c *GuildsCollection) SetGuild(id discord.GuildID, value schema.Guild) erro
 	if !g.ID.IsValid() {
 		g.ID = id
 	}
-	result := c.FindOneAndReplace(context.Background(), guildIdFilter(id), *g, options.FindOneAndReplace().SetUpsert(true))
+	result := c.FindOneAndReplace(context.Background(), guildIdFilter(id), *g, options.FindOneAndReplace().SetUpsert(true).SetReturnDocument(options.After))
 	err := result.Err()
 	if err == nil {
 		guildCache.Set(id, g, ttlcache.DefaultTTL)
