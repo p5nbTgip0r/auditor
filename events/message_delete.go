@@ -10,7 +10,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	"github.com/rs/zerolog/log"
-	"io"
 	"net/http"
 	"strings"
 )
@@ -47,19 +46,6 @@ func init() {
 	})
 }
 
-func httpDown(url string) (io.ReadCloser, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	//defer res.Body.Close()
-
-	// todo: check the size first, then dump to a temporary file on the disk if it's large enough
-	//d, err := io.ReadAll(res.Body)
-	return res.Body, err
-}
-
 func deletedMessageLogs(m *discord.Message) {
 	if !check(audit.MessageDelete, &m.GuildID, &m.ChannelID) {
 		return
@@ -75,11 +61,6 @@ func deletedMessageLogs(m *discord.Message) {
 	}
 	desc := fmt.Sprintf("**:wastebasket: Message deleted from %s:**\n\n%s", m.ChannelID.Mention(), mContent)
 
-	// todo: this is BAD. if a 100mb file is sent, the whole file is gonna be loaded into memory *and* this whole handler
-	//thing is gonna block until the download is finished. i gotta clean this up, but it's a 1:1 implementation from the
-	//python version at the moment
-	// todo update: this is a little better now, but still kind of fucky. i've modified it so i'm just passing the reader
-	// into the file, then it won't load the whole thing into ram first
 	var attachmentsField strings.Builder
 	var files []sendpart.File
 	var fields []discord.EmbedField
