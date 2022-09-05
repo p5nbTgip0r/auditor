@@ -17,9 +17,10 @@ func init() {
 			if err != nil {
 				go handleError(
 					audit.ServerEdited,
+					c.ID,
 					err,
 					"Could not retrieve guild from cache: `"+c.ID.String()+"`",
-					nil,
+					discord.User{},
 				)
 				return
 			}

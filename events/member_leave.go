@@ -106,9 +106,10 @@ func init() {
 			if err != nil {
 				go handleError(
 					audit.MemberLeave,
+					c.GuildID,
 					err,
 					fmt.Sprintf("Could not retrieve member from cache: %s", util.UserTag(c.User)),
-					&c.User,
+					c.User,
 				)
 				return
 			}

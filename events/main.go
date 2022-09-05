@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/database"
 	"audit/util/color"
 	"fmt"
@@ -38,15 +39,21 @@ func handleAuditError(msg *discord.Message, err error, embeds ...discord.Embed) 
 	}
 }
 
-func handleError(auditType audit.Type, err error, msg string, user *discord.User) {
+func handleError(auditType audit.Type, g discord.GuildID, err error, msg string, user discord.User) {
 	embed := errorEmbed(auditType, msg, user)
-	handleAuditError(s.SendEmbeds(auditChannel, *embed))
+	log.Warn().
+		Err(err).
+		Interface("auditType", auditType.String()).
+		Interface("guildID", g).
+		Interface("user", user).
+		Msgf("Encountered error from audit type '%s': %s", auditType.String(), msg)
+	bot.QueueEmbed(auditType, g, *embed)
 }
 
-func errorEmbed(auditType audit.Type, msg string, user *discord.User) *discord.Embed {
+func errorEmbed(auditType audit.Type, msg string, user discord.User) *discord.Embed {
 	var e *discord.Embed
-	if user != nil {
-		e = userBaseEmbed(*user, "", false)
+	if user.ID.IsValid() {
+		e = userBaseEmbed(user, "", false)
 	} else {
 		e = &discord.Embed{}
 	}

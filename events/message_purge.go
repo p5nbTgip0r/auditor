@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"bytes"
 	"encoding/json"
 	"fmt"

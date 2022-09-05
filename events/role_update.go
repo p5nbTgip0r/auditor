@@ -93,9 +93,10 @@ func init() {
 			if err != nil {
 				go handleError(
 					audit.RoleUpdate,
+					c.GuildID,
 					err,
 					fmt.Sprintf("Could not retrieve role from cache: `%s` / `%s`", c.Role.Name, c.Role.ID),
-					nil,
+					discord.User{},
 				)
 				return
 			}

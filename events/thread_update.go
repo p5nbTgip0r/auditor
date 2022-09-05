@@ -92,9 +92,10 @@ func init() {
 			if err != nil {
 				go handleError(
 					audit.ChannelUpdate,
+					c.GuildID,
 					err,
 					fmt.Sprintf("Could not retrieve thread from cache: `%s` / `%s`", c.Channel.Name, c.Channel.ID),
-					nil,
+					discord.User{},
 				)
 				return
 			}
