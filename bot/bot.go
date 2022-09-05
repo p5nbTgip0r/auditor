@@ -1,13 +1,14 @@
 package bot
 
 import (
+	"audit/util"
 	"context"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
+	"github.com/diamondburned/arikawa/v3/state/store/defaultstore"
 	"github.com/diamondburned/arikawa/v3/utils/handler"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"os"
 )
 
 var (
@@ -16,7 +17,17 @@ var (
 
 func Initialize(ctx context.Context) (*state.State, error) {
 	log.Debug().Msg("Initialize Discord bot..")
-	s = state.New("Bot " + os.Getenv("DISCORD_TOKEN"))
+
+	token, err := util.GetEnvRequired("DISCORD_TOKEN")
+	if err != nil {
+		return nil, err
+	}
+
+	maxMsgs := util.GetEnvIntDefault("DISCORD_MAX_MESSAGES", 1000)
+	store := defaultstore.New()
+	store.MessageStore = defaultstore.NewMessage(maxMsgs)
+
+	s = state.NewWithStore("Bot "+token, store)
 
 	s.AddIntents(gateway.IntentGuilds)
 	s.AddIntents(gateway.IntentGuildMessages)

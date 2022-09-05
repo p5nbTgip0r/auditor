@@ -1,13 +1,12 @@
 package database
 
 import (
+	"audit/util"
 	"context"
-	"fmt"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"os"
 )
 
 type AuditCollections struct {
@@ -21,9 +20,9 @@ var (
 )
 
 func Initialize(ctx context.Context) (*mongo.Client, error) {
-	uri, ok := os.LookupEnv("MONGODB_URI")
-	if !ok {
-		return nil, fmt.Errorf("environment variable 'MONGODB_URI' must be set")
+	uri, err := util.GetEnvRequired("MONGODB_URI")
+	if err != nil {
+		return nil, err
 	}
 
 	log.Debug().Msg("Creating MongoDB client..")
@@ -44,9 +43,9 @@ func Initialize(ctx context.Context) (*mongo.Client, error) {
 
 func setupVariables(client *mongo.Client) {
 	Client = client
-	Database = client.Database(getEnvDefault("MONGODB_DATABASE", "auditBot"))
+	Database = client.Database(util.GetEnvDefault("MONGODB_DATABASE", "auditBot"))
 	Collections = &AuditCollections{
-		Guilds: &GuildsCollection{Database.Collection(getEnvDefault("MONGODB_GUILDS_COLLECTION", "guilds"))},
+		Guilds: &GuildsCollection{Database.Collection(util.GetEnvDefault("MONGODB_GUILDS_COLLECTION", "guilds"))},
 	}
 }
 
@@ -64,14 +63,6 @@ func createIndexes(ctx context.Context) error {
 
 	log.Debug().Interface("indexName", i).Msg("Created index for guilds")
 	return nil
-}
-
-func getEnvDefault(key, defaultValue string) string {
-	value, ok := os.LookupEnv(key)
-	if !ok {
-		return defaultValue
-	}
-	return value
 }
 
 func Disconnect(ctx context.Context) error {
