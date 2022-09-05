@@ -17,31 +17,32 @@ func _() {
 	_ = x[MemberRoles-6]
 	_ = x[MemberTimeout-7]
 	_ = x[MemberScreening-8]
-	_ = x[MemberJoin-9]
-	_ = x[MemberLeave-10]
-	_ = x[MemberBan-11]
-	_ = x[MemberUnban-12]
-	_ = x[MemberKick-13]
-	_ = x[RoleCreate-14]
-	_ = x[RoleUpdate-15]
-	_ = x[RoleDelete-16]
-	_ = x[ServerEdited-17]
-	_ = x[ServerEmoji-18]
-	_ = x[UserName-19]
-	_ = x[UserAvatar-20]
-	_ = x[ChannelCreate-21]
-	_ = x[ChannelUpdate-22]
-	_ = x[ChannelDelete-23]
-	_ = x[InviteSend-24]
-	_ = x[InviteCreate-25]
-	_ = x[InviteDelete-26]
-	_ = x[VoiceConnection-27]
-	_ = x[VoiceAudioState-28]
+	_ = x[MemberUpdate-9]
+	_ = x[MemberJoin-10]
+	_ = x[MemberLeave-11]
+	_ = x[MemberBan-12]
+	_ = x[MemberUnban-13]
+	_ = x[MemberKick-14]
+	_ = x[RoleCreate-15]
+	_ = x[RoleUpdate-16]
+	_ = x[RoleDelete-17]
+	_ = x[ServerEdited-18]
+	_ = x[ServerEmoji-19]
+	_ = x[UserName-20]
+	_ = x[UserAvatar-21]
+	_ = x[ChannelCreate-22]
+	_ = x[ChannelUpdate-23]
+	_ = x[ChannelDelete-24]
+	_ = x[InviteSend-25]
+	_ = x[InviteCreate-26]
+	_ = x[InviteDelete-27]
+	_ = x[VoiceConnection-28]
+	_ = x[VoiceAudioState-29]
 }
 
-const _Type_name = "UnknownMessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteInviteSendInviteCreateInviteDeleteVoiceConnectionVoiceAudioState"
+const _Type_name = "UnknownMessageDeleteMessageUpdateMessagePurgeMemberNicknameMemberAvatarMemberRolesMemberTimeoutMemberScreeningMemberUpdateMemberJoinMemberLeaveMemberBanMemberUnbanMemberKickRoleCreateRoleUpdateRoleDeleteServerEditedServerEmojiUserNameUserAvatarChannelCreateChannelUpdateChannelDeleteInviteSendInviteCreateInviteDeleteVoiceConnectionVoiceAudioState"
 
-var _Type_index = [...]uint16{0, 7, 20, 33, 45, 59, 71, 82, 95, 110, 120, 131, 140, 151, 161, 171, 181, 191, 203, 214, 222, 232, 245, 258, 271, 281, 293, 305, 320, 335}
+var _Type_index = [...]uint16{0, 7, 20, 33, 45, 59, 71, 82, 95, 110, 122, 132, 143, 152, 163, 173, 183, 193, 203, 215, 226, 234, 244, 257, 270, 283, 293, 305, 317, 332, 347}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {

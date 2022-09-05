@@ -15,6 +15,7 @@ const (
 	MemberRoles
 	MemberTimeout
 	MemberScreening
+	MemberUpdate
 	MemberJoin
 	MemberLeave
 	MemberBan

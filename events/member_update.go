@@ -107,7 +107,7 @@ func init() {
 			old, err := s.MemberStore.Member(e.GuildID, e.User.ID)
 			if err != nil {
 				go handleError(
-					audit.MemberJoin,
+					audit.MemberUpdate,
 					e.GuildID,
 					err,
 					"Could not retrieve member from cache: "+util.UserTag(e.User),
