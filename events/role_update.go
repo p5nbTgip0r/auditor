@@ -18,7 +18,7 @@ func init() {
 		}
 
 		e := &discord.Embed{
-			Description: fmt.Sprintf("**:pencil: Role updated: %s**", new.Name),
+			Description: fmt.Sprintf("**:pencil: Role updated: %s**", new.Mention()),
 			Color:       color.Gold,
 			Timestamp:   discord.NowTimestamp(),
 			Footer:      &discord.EmbedFooter{Text: fmt.Sprintf("ID: %s", new.ID)},

@@ -19,7 +19,7 @@ func init() {
 			}
 
 			e := &discord.Embed{
-				Description: fmt.Sprintf("**:crossed_swords: Role created: %s**", c.Role.Name),
+				Description: fmt.Sprintf("**:crossed_swords: Role created: %s**", c.Role.Mention()),
 				Color:       color.Green,
 				Timestamp:   discord.NewTimestamp(c.Role.CreatedAt()),
 				Footer:      &discord.EmbedFooter{Text: fmt.Sprintf("ID: %s", c.Role.ID)},
