@@ -54,6 +54,9 @@ func init() {
 			}
 
 			i := invites[c.GuildID]
+			if i == nil {
+				i = make(map[string]int)
+			}
 			i[c.Code] = 0
 			invites[c.GuildID] = i
 		})
@@ -70,9 +73,9 @@ func init() {
 				return
 			}
 
-			oldInvites, ok := invites[c.GuildID]
+			oldInvites := invites[c.GuildID]
 			var usedInvite *discord.Invite
-			if ok {
+			if oldInvites != nil {
 				newInvites, err := s.GuildInvites(c.GuildID)
 				if err != nil {
 					log.Warn().
