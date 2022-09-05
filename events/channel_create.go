@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -46,7 +47,7 @@ func init() {
 				e.Fields = append(e.Fields, discord.EmbedField{Name: "Topic", Value: c.Topic})
 			}
 
-			handleAuditError(s.SendEmbeds(auditChannel, *e))
+			bot.QueueEmbed(audit.ChannelCreate, c.GuildID, *e)
 		})
 	})
 }

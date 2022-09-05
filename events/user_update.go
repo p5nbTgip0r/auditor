@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -23,8 +24,7 @@ func diffUser(new gateway.GuildMemberUpdateEvent, old discord.User, diff userDif
 			discord.EmbedField{Name: "Old tag", Value: old.Tag()},
 			discord.EmbedField{Name: "New tag", Value: new.User.Tag()},
 		)
-		msg, err := s.SendEmbeds(auditChannel, *c)
-		handleAuditError(msg, err, *c)
+		bot.QueueEmbed(audit.UserName, new.GuildID, *c)
 	}
 
 	if diff.fields.Has(fieldUserAvatar) && check(audit.UserAvatar, &new.GuildID, nil) {
@@ -33,7 +33,6 @@ func diffUser(new gateway.GuildMemberUpdateEvent, old discord.User, diff userDif
 			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL()},
 			discord.EmbedField{Name: "New avatar", Value: new.User.AvatarURL()},
 		)
-		msg, err := s.SendEmbeds(auditChannel, *c)
-		handleAuditError(msg, err, *c)
+		bot.QueueEmbed(audit.UserAvatar, new.GuildID, *c)
 	}
 }

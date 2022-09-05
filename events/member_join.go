@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -117,7 +118,7 @@ func init() {
 			if c.IsPending {
 				embed.Description += "\n\n**:clipboard: User is currently in membership screening**"
 			}
-			handleAuditError(s.SendMessage(auditChannel, "", *embed))
+			bot.QueueEmbed(audit.MemberJoin, c.GuildID, *embed)
 		})
 	})
 }

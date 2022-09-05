@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -45,7 +46,7 @@ func init() {
 			perms = strings.ReplaceAll(perms, "Administrator", "**Administrator**")
 			e.Fields = append(e.Fields, discord.EmbedField{Name: "Permissions", Value: perms})
 
-			handleAuditError(s.SendEmbeds(auditChannel, *e))
+			bot.QueueEmbed(audit.RoleCreate, c.GuildID, *e)
 		})
 	})
 }

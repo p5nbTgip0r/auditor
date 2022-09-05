@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -48,12 +49,12 @@ func init() {
 		}
 
 		if len(fields) != 0 {
-			handleAuditError(s.SendEmbeds(auditChannel, discord.Embed{
+			bot.QueueEmbed(audit.ServerEmoji, c.GuildID, discord.Embed{
 				Description: "**:pencil: Server's emojis updated!**",
 				Timestamp:   discord.NowTimestamp(),
 				Color:       color.Gold,
 				Fields:      fields,
-			}))
+			})
 		}
 	}
 

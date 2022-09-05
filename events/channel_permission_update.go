@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -43,7 +44,7 @@ func init() {
 			Timestamp:   discord.NowTimestamp(),
 			Color:       color.Gold,
 		}
-		handleAuditError(s.SendEmbeds(auditChannel, e))
+		bot.QueueEmbed(audit.ChannelUpdate, new.GuildID, e)
 	}
 
 	handler = append(handler, func() {

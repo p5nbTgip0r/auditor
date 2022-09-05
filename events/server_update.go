@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -35,7 +36,7 @@ func handleServerUpdate(old, new discord.Guild) {
 		return
 	}
 
-	var embed discord.Embed
+	var embed *discord.Embed
 	embed.Description = "**:pencil: Server information updated!**"
 	embed.Color = color.Gold
 	embed.Timestamp = discord.NowTimestamp()
@@ -152,5 +153,5 @@ func handleServerUpdate(old, new discord.Guild) {
 
 	embed.Fields = fields
 
-	handleAuditError(s.SendEmbeds(auditChannel, embed))
+	bot.QueueEmbed(audit.ServerEdited, new.ID, *embed)
 }

@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -102,7 +103,7 @@ func init() {
 			util.AddField(e, "Region Override", fmtRegion, false)
 		}
 
-		handleAuditError(s.SendEmbeds(auditChannel, *e))
+		bot.QueueEmbed(audit.ChannelDelete, old.GuildID, *e)
 	}
 
 	handler = append(handler, func() {

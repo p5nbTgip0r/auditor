@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -84,7 +85,7 @@ func init() {
 			return
 		}
 
-		handleAuditError(s.SendEmbeds(auditChannel, *e))
+		bot.QueueEmbed(audit.RoleUpdate, guildID, *e)
 	}
 
 	handler = append(handler, func() {

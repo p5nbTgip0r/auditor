@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -24,7 +25,7 @@ func init() {
 			util.AddField(e, "Code", fmt.Sprintf("[**%s**](https://discord.gg/%s)", c.Code, c.Code), false)
 			util.AddField(e, "Channel", util.ChannelTag(c.ChannelID), false)
 
-			handleAuditError(s.SendEmbeds(auditChannel, *e))
+			bot.QueueEmbed(audit.InviteDelete, c.GuildID, *e)
 		})
 	})
 }

@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -27,7 +28,7 @@ func init() {
 				},
 			)
 
-			handleAuditError(s.SendEmbeds(auditChannel, *e))
+			bot.QueueEmbed(audit.MemberUnban, c.GuildID, *e)
 		})
 	})
 }

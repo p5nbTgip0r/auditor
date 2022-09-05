@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -63,7 +64,7 @@ func init() {
 			util.AddField(e, "Slowmode", humanize.Duration("", old.UserRateLimit.Duration()), false)
 		}
 
-		handleAuditError(s.SendEmbeds(auditChannel, *e))
+		bot.QueueEmbed(audit.ChannelDelete, old.GuildID, *e)
 	}
 
 	handler = append(handler, func() {

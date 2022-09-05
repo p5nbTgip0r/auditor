@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -20,8 +21,8 @@ func init() {
 		} else {
 			e = discord.NewEmbed()
 		}
-		send := func(embed discord.Embed) {
-			handleAuditError(s.SendEmbeds(auditChannel, embed))
+		send := func(auditType audit.Type, embed discord.Embed) {
+			bot.QueueEmbed(auditType, new.GuildID, embed)
 		}
 
 		if check(audit.VoiceConnection, &new.GuildID, &new.ChannelID) {
@@ -29,7 +30,7 @@ func init() {
 			if (old == nil || !old.ChannelID.IsValid()) && new.ChannelID.IsValid() {
 				e.Description = "**:inbox_tray: " + new.UserID.Mention() + " joined voice in " + new.ChannelID.Mention() + "**"
 				e.Color = color.Green
-				send(*e)
+				send(audit.VoiceConnection, *e)
 				// none of these other events should take place
 				return
 			}
@@ -44,7 +45,7 @@ func init() {
 			if old.ChannelID.IsValid() && !new.ChannelID.IsValid() {
 				e.Description = "**:outbox_tray: " + new.UserID.Mention() + " left voice from " + old.ChannelID.Mention() + "**"
 				e.Color = color.Red
-				send(*e)
+				send(audit.VoiceConnection, *e)
 				// none of these other events should take place
 				return
 			}
@@ -53,7 +54,7 @@ func init() {
 			if old.ChannelID.IsValid() && new.ChannelID.IsValid() && old.ChannelID != new.ChannelID {
 				e.Description = fmt.Sprintf("**:twisted_rightwards_arrows: %s switched voice channels: %s -> %s**", new.UserID.Mention(), old.ChannelID.Mention(), new.ChannelID.Mention())
 				e.Color = color.Blue
-				send(*e)
+				send(audit.VoiceConnection, *e)
 			}
 		} else if old == nil {
 			return
@@ -78,7 +79,7 @@ func init() {
 			}
 
 			e.Description = fmt.Sprintf("**%s %s was %s**", emoji, id.Mention(), text)
-			send(*e)
+			send(audit.VoiceAudioState, *e)
 		}
 
 		filter := func(key discord.AuditLogChangeKey, wantedValue bool) func(entry discord.AuditLogEntry) bool {

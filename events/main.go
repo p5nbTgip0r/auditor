@@ -27,18 +27,6 @@ func InitEventHandlers(state *state.State) {
 	}
 }
 
-func handleAuditError(msg *discord.Message, err error, embeds ...discord.Embed) {
-	if err != nil {
-		log.Err(err).
-			Interface("embeds", embeds).
-			Msg("Could not send log message")
-	} else {
-		log.Debug().
-			Interface("message", msg).
-			Msgf("Successfully sent log message")
-	}
-}
-
 func handleError(auditType audit.Type, g discord.GuildID, err error, msg string, user discord.User) {
 	embed := errorEmbed(auditType, msg, user)
 	log.Warn().

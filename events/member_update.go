@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -181,8 +182,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 			discord.EmbedField{Name: "Old nickname", Value: old.Nick},
 			discord.EmbedField{Name: "New nickname", Value: new.Nick},
 		)
-		msg, err := s.SendEmbeds(auditChannel, *c)
-		handleAuditError(msg, err, *c)
+		bot.QueueEmbed(audit.MemberNickname, new.GuildID, *c)
 	}
 
 	if diff.fields.Has(fieldMemberTimeout) && check(audit.MemberTimeout, &new.GuildID, nil) {
@@ -203,15 +203,13 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		}
 
 		if c != nil {
-			msg, err := s.SendEmbeds(auditChannel, *c)
-			handleAuditError(msg, err, *c)
+			bot.QueueEmbed(audit.MemberTimeout, new.GuildID, *c)
 		}
 	}
 
 	if diff.fields.Has(fieldMemberPending) && check(audit.MemberScreening, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:clipboard: %s completed membership screening**", new.User.Mention()))
-		msg, err := s.SendEmbeds(auditChannel, *c)
-		handleAuditError(msg, err, *c)
+		bot.QueueEmbed(audit.MemberScreening, new.GuildID, *c)
 	}
 
 	if diff.fields.Has(fieldMemberAvatar) && check(audit.MemberAvatar, &new.GuildID, nil) {
@@ -220,8 +218,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL(new.GuildID)},
 			discord.EmbedField{Name: "New avatar", Value: new.Avatar},
 		)
-		msg, err := s.SendEmbeds(auditChannel, *c)
-		handleAuditError(msg, err, *c)
+		bot.QueueEmbed(audit.MemberAvatar, new.GuildID, *c)
 	}
 
 	if diff.fields.Has(fieldMemberRoles) && check(audit.MemberRoles, &new.GuildID, nil) {
@@ -256,7 +253,7 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 			})
 		}
 
-		handleAuditError(s.SendEmbeds(auditChannel, *embed))
+		bot.QueueEmbed(audit.MemberRoles, new.GuildID, *embed)
 	}
 }
 

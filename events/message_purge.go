@@ -49,10 +49,19 @@ func init() {
 		}
 
 		// TODO use the archive system to save the raw message data and hyperlink to it
-		handleAuditError(s.SendMessageComplex(auditChannel, api.SendMessageData{
-			Embeds: []discord.Embed{embed},
-			Files:  files,
-		}))
+		err := bot.ProcessMessage(bot.AuditMessage{
+			AuditType: audit.MessageDelete,
+			GuildID:   c.GuildID,
+			SendMessageData: api.SendMessageData{
+				Embeds: []discord.Embed{embed},
+				Files:  files,
+			},
+		})
+		if err == nil {
+			return
+		}
+		// fallback to the normal message handling if sending attachments failed
+		bot.QueueEmbed(audit.MessageDelete, c.GuildID, embed)
 	}
 
 	handler = append(handler, func() {

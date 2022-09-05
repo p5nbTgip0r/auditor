@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -48,7 +49,7 @@ func init() {
 				util.AddField(e, "Temporary membership", "Yes", false)
 			}
 
-			handleAuditError(s.SendEmbeds(auditChannel, *e))
+			bot.QueueEmbed(audit.InviteCreate, c.GuildID, *e)
 		})
 	})
 }

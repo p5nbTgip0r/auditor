@@ -2,6 +2,7 @@ package events
 
 import (
 	"audit/audit"
+	"audit/bot"
 	"audit/util"
 	"audit/util/color"
 	"fmt"
@@ -44,6 +45,7 @@ func init() {
 			joined = "Could not retrieve"
 		}
 
+		auditType := audit.MemberLeave
 		embed := userBaseEmbed(c.User, "", true)
 		embed.Color = color.Red
 
@@ -57,7 +59,8 @@ func init() {
 		if entry != nil && actionerMem != nil {
 			switch entry.ActionType {
 			case discord.MemberBanAdd:
-				if !check(audit.MemberBan, &c.GuildID, nil) {
+				auditType = audit.MemberBan
+				if !check(auditType, &c.GuildID, nil) {
 					return
 				}
 
@@ -70,7 +73,8 @@ func init() {
 					},
 				)
 			case discord.MemberKick:
-				if !check(audit.MemberKick, &c.GuildID, nil) {
+				auditType = audit.MemberKick
+				if !check(auditType, &c.GuildID, nil) {
 					return
 				}
 
@@ -84,7 +88,8 @@ func init() {
 				)
 			}
 		} else {
-			if !check(audit.MemberLeave, &c.GuildID, nil) {
+			auditType = audit.MemberLeave
+			if !check(auditType, &c.GuildID, nil) {
 				return
 			}
 
@@ -96,8 +101,7 @@ func init() {
 				},
 			)
 		}
-
-		handleAuditError(s.SendMessage(auditChannel, "", *embed))
+		bot.QueueEmbed(auditType, c.GuildID, *embed)
 	}
 
 	handler = append(handler, func() {
