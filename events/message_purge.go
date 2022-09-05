@@ -66,6 +66,9 @@ func init() {
 
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteBulkEvent) {
+			if !c.GuildID.IsValid() {
+				return
+			}
 			var unrecoverableMessages []discord.MessageID
 			var messages []discord.Message
 			for _, mID := range c.IDs {

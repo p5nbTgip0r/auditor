@@ -70,8 +70,8 @@ func userBaseEmbed(user discord.User, url string, userUpdate bool) *discord.Embe
 // check looks whether the given audit type is enabled for the given guild and channel IDs.
 // This function blocks to access the database.
 func check(a audit.Type, g *discord.GuildID, c *discord.ChannelID) bool {
-	if g == nil {
-		return true
+	if g == nil || !g.IsValid() {
+		return false
 	}
 	sg, err := database.Collections.Guilds.GetGuild(*g)
 	if err != nil || sg.LoggingDisabled || !sg.AuditChannelID.IsValid() {

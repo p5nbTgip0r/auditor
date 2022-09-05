@@ -18,6 +18,9 @@ import (
 func init() {
 	handler = append(handler, func() {
 		s.PreHandler.AddSyncHandler(func(c *gateway.MessageDeleteEvent) {
+			if !c.GuildID.IsValid() {
+				return
+			}
 			m, err := s.Message(c.ChannelID, c.ID)
 			if err != nil {
 				log.Warn().
