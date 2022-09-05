@@ -98,7 +98,9 @@ func init() {
 			Interface("member", old).
 			Msgf("Member updated: %s", event.User.Tag())
 
-		diffMember(event, old, fields)
+		newMember := old
+		event.UpdateMember(&newMember)
+		diffMember(event, old, newMember, fields)
 		diffUser(event, old.User, fields)
 	}
 
@@ -168,7 +170,7 @@ func determineUpdatedFields(old discord.Member, new gateway.GuildMemberUpdateEve
 	}
 }
 
-func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff userDiff) {
+func diffMember(e gateway.GuildMemberUpdateEvent, old, new discord.Member, diff userDiff) {
 	getEmbed := func(desc string) *discord.Embed {
 		c := userBaseEmbed(new.User, "", true)
 		c.Color = color.Gold
@@ -176,25 +178,18 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		return c
 	}
 
-	if diff.fields.Has(fieldMemberNickname) && check(audit.MemberNickname, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberNickname) && check(audit.MemberNickname, &e.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:pencil: %s nickname edited**", new.User.Mention()))
-		c.Fields = append(c.Fields,
-			discord.EmbedField{Name: "Old nickname", Value: old.Nick},
-			discord.EmbedField{Name: "New nickname", Value: new.Nick},
-		)
-		bot.QueueEmbed(audit.MemberNickname, new.GuildID, *c)
+		util.AddField(c, "Old nickname", old.Nick, false)
+		util.AddField(c, "New nickname", new.Nick, false)
+		bot.QueueEmbed(audit.MemberNickname, e.GuildID, *c)
 	}
 
-	if diff.fields.Has(fieldMemberTimeout) && check(audit.MemberTimeout, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberTimeout) && check(audit.MemberTimeout, &e.GuildID, nil) {
 		var c *discord.Embed
 		if new.CommunicationDisabledUntil.IsValid() {
 			c = getEmbed(fmt.Sprintf("**:zipper_mouth: %s was timed out**", new.User.Mention()))
-			c.Fields = append(c.Fields,
-				discord.EmbedField{
-					Name:  "Timeout Expiry",
-					Value: util.Timestamp(new.CommunicationDisabledUntil.Time(), util.Relative),
-				},
-			)
+			util.AddField(c, "Timeout Expiry", util.Timestamp(new.CommunicationDisabledUntil.Time(), util.Relative), false)
 		} else if old.CommunicationDisabledUntil.Time().After(time.Now()) {
 			// it's sometimes possible to remove a timeout after it's expired.
 			// this `else` statement will only be reached if the timeout was removed, so this just ensures the old timeout
@@ -203,28 +198,26 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 		}
 
 		if c != nil {
-			bot.QueueEmbed(audit.MemberTimeout, new.GuildID, *c)
+			bot.QueueEmbed(audit.MemberTimeout, e.GuildID, *c)
 		}
 	}
 
-	if diff.fields.Has(fieldMemberPending) && check(audit.MemberScreening, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberPending) && check(audit.MemberScreening, &e.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:clipboard: %s completed membership screening**", new.User.Mention()))
-		bot.QueueEmbed(audit.MemberScreening, new.GuildID, *c)
+		bot.QueueEmbed(audit.MemberScreening, e.GuildID, *c)
 	}
 
-	if diff.fields.Has(fieldMemberAvatar) && check(audit.MemberAvatar, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberAvatar) && check(audit.MemberAvatar, &e.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:frame_photo: %s changed their __guild__ avatar**", new.User.Mention()))
-		c.Fields = append(c.Fields,
-			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL(new.GuildID)},
-			discord.EmbedField{Name: "New avatar", Value: new.Avatar},
-		)
-		bot.QueueEmbed(audit.MemberAvatar, new.GuildID, *c)
+		util.AddField(c, "Old avatar", old.AvatarURL(e.GuildID), false)
+		util.AddField(c, "New avatar", new.AvatarURL(e.GuildID), false)
+		bot.QueueEmbed(audit.MemberAvatar, e.GuildID, *c)
 	}
 
-	if diff.fields.Has(fieldMemberRoles) && check(audit.MemberRoles, &new.GuildID, nil) {
+	if diff.fields.Has(fieldMemberRoles) && check(audit.MemberRoles, &e.GuildID, nil) {
 		addRoles, remRoles := diff.addedRoles, diff.removedRoles
 		roleNames := make(map[discord.RoleID]string)
-		guild, err := s.Guild(new.GuildID)
+		guild, err := s.Guild(e.GuildID)
 		if err == nil {
 			for _, role := range guild.Roles {
 				roleNames[role.ID] = role.Name
@@ -238,22 +231,14 @@ func diffMember(new gateway.GuildMemberUpdateEvent, old discord.Member, diff use
 
 		embed := getEmbed(fmt.Sprintf("**:crossed_swords: %s roles have changed**", new.User.Mention()))
 		if addRoles.Cardinality() != 0 {
-			embed.Fields = append(embed.Fields, discord.EmbedField{
-				Name:   "Added roles",
-				Value:  formatRoles(addRoles, roleNames),
-				Inline: false,
-			})
+			util.AddField(embed, "Added roles", formatRoles(addRoles, roleNames), false)
 		}
 
 		if remRoles.Cardinality() != 0 {
-			embed.Fields = append(embed.Fields, discord.EmbedField{
-				Name:   "Removed roles",
-				Value:  formatRoles(remRoles, roleNames),
-				Inline: false,
-			})
+			util.AddField(embed, "Removed roles", formatRoles(remRoles, roleNames), false)
 		}
 
-		bot.QueueEmbed(audit.MemberRoles, new.GuildID, *embed)
+		bot.QueueEmbed(audit.MemberRoles, e.GuildID, *embed)
 	}
 }
 

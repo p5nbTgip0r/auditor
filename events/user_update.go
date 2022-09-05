@@ -3,6 +3,7 @@ package events
 import (
 	"audit/audit"
 	"audit/bot"
+	"audit/util"
 	"audit/util/color"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -20,19 +21,15 @@ func diffUser(new gateway.GuildMemberUpdateEvent, old discord.User, diff userDif
 
 	if (diff.fields.Has(fieldUserName) || diff.fields.Has(fieldUserDiscriminator)) && check(audit.UserName, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:pencil: %s Discord tag changed**", new.User.Mention()))
-		c.Fields = append(c.Fields,
-			discord.EmbedField{Name: "Old tag", Value: old.Tag()},
-			discord.EmbedField{Name: "New tag", Value: new.User.Tag()},
-		)
+		util.AddField(c, "Old tag", old.Tag(), false)
+		util.AddField(c, "New tag", new.User.Tag(), false)
 		bot.QueueEmbed(audit.UserName, new.GuildID, *c)
 	}
 
 	if diff.fields.Has(fieldUserAvatar) && check(audit.UserAvatar, &new.GuildID, nil) {
 		c := getEmbed(fmt.Sprintf("**:frame_photo: %s changed their __user__ avatar**", new.User.Mention()))
-		c.Fields = append(c.Fields,
-			discord.EmbedField{Name: "Old avatar", Value: old.AvatarURL()},
-			discord.EmbedField{Name: "New avatar", Value: new.User.AvatarURL()},
-		)
+		util.AddField(c, "Old avatar", old.AvatarURL(), false)
+		util.AddField(c, "New avatar", new.User.AvatarURL(), false)
 		bot.QueueEmbed(audit.UserAvatar, new.GuildID, *c)
 	}
 }
