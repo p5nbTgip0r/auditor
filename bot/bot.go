@@ -15,7 +15,7 @@ var (
 	s *state.State
 )
 
-func Initialize(ctx context.Context) (*state.State, error) {
+func Initialize() (*state.State, error) {
 	log.Debug().Msg("Initialize Discord bot..")
 
 	token, err := util.GetEnvRequired("DISCORD_TOKEN")
@@ -41,13 +41,17 @@ func Initialize(ctx context.Context) (*state.State, error) {
 	// Make a pre-handler
 	s.PreHandler = handler.New()
 
+	return s, err
+}
+
+func Open(ctx context.Context) error {
 	log.Debug().Msg("Connecting to Discord..")
 	err := s.Open(ctx)
 	if err == nil {
 		log.Debug().Msg("Connected to Discord")
 		err = errors.Wrap(updateCommands(), "update slash commands")
 	}
-	return s, err
+	return err
 }
 
 func Close() error {

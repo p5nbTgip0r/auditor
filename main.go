@@ -26,7 +26,14 @@ func main() {
 		}
 	}(ctx)
 
-	s, err := bot.Initialize(ctx)
+	s, err := bot.Initialize()
+	if err != nil {
+		log.Panic().Err(err).Msg("Failed initializing Discord bot")
+	}
+
+	events.InitEventHandlers(s)
+
+	err = bot.Open(ctx)
 	if err != nil {
 		log.Panic().Err(err).Msg("Failed opening Discord bot")
 	}
@@ -36,8 +43,6 @@ func main() {
 			log.Panic().Err(err).Msg("Could not close Discord bot")
 		}
 	}()
-
-	events.InitEventHandlers(s)
 
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
