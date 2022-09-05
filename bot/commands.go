@@ -208,10 +208,10 @@ func updateCommands() error {
 			// delete all the debug guild commands
 			guildCmds, err := s.BulkOverwriteGuildCommands(app.ID, guildID, []api.CreateCommandData{})
 			if err != nil {
-				log.Debug().Interface("commands", guildCmds).Msg("Deleted guild commands successfully")
-			} else {
 				// this step isn't crucial to the bot functioning, so we just warn about the error
 				log.Warn().Err(err).Msg("Could not delete guild commands for non-debug environment")
+			} else {
+				log.Debug().Interface("commands", guildCmds).Msg("Deleted guild commands successfully")
 			}
 		}
 	}
